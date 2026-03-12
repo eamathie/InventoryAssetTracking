@@ -1,33 +1,34 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using InventoryAssetTracking.Models;
 
 namespace InventoryAssetTracking.Tools;
 
-public class IdentitySeeder
+public class IdentitySeeder(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
 {
-    public static async Task SeedRolesAndAdmin(IServiceProvider serviceProvider)
+    public async Task SeedRolesAsync()
     {
-        using var scope = serviceProvider.CreateScope();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        
-        // Add roles if they don't exist already
+        // 1. Ensure roles exist
         string[] roles = ["Admin", "Employee"];
+
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
         }
-        
-        // Seed admin user
+
+        // 2. Ensure admin user exists
         const string adminEmail = "admin@example.com";
-        var adminUser = await  userManager.FindByEmailAsync(adminEmail);
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
         if (adminUser == null)
         {
-            adminUser = new IdentityUser
+            adminUser = new User
             {
                 UserName = adminEmail,
                 Email = adminEmail,
+                CreatedAt = DateTime.UtcNow
             };
+
             await userManager.CreateAsync(adminUser, "Admin123!");
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }

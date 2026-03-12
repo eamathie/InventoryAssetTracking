@@ -1,5 +1,6 @@
 using System.Text;
 using InventoryAssetTracking;
+using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Tools;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,10 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+
+// Set up IdentitySeeder
+builder.Services.AddTransient<IdentitySeeder>();
+
 
 // Set up connection to db
 var root = Directory.GetCurrentDirectory();
@@ -48,8 +53,9 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+
 // Set up Identity Core
-builder.Services.AddIdentityCore<IdentityUser>(options =>
+builder.Services.AddIdentityCore<User>(options =>
     {
         options.User.RequireUniqueEmail = true;
     })
@@ -60,7 +66,10 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
-    await IdentitySeeder.SeedRolesAndAdmin(scope.ServiceProvider);
+{
+    var seeder = scope.ServiceProvider.GetService<IdentitySeeder>();
+    await seeder.SeedRolesAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
