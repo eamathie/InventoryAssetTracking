@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventoryAssetTracking;
 
-public class InventoryAssetContext: IdentityDbContext<IdentityUser>
+public class InventoryAssetContext: IdentityDbContext<User>
 {
     public DbSet<Category> Categories { get; set; }
     public DbSet<Asset> Assets { get; set; }
@@ -19,9 +19,11 @@ public class InventoryAssetContext: IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        base.OnModelCreating(builder);
+        
         builder.Entity<User>()
             .Property(a => a.CreatedAt)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
         
         builder.Entity<Asset>()
             .Property(a => a.Status)
@@ -29,14 +31,14 @@ public class InventoryAssetContext: IdentityDbContext<IdentityUser>
 
         builder.Entity<Asset>()
             .Property(a => a.CreatedAt)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
         
         builder.Entity<Asset>()
             .Property(a => a.UpdatedAt)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
         
         builder.Entity<Checkout>()
             .Property(c => c.CheckedOutAt)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 }

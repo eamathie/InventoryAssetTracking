@@ -10,7 +10,7 @@ public class AssetHistory
     public int AssetId { get; set; }
     
     public User? User { get; set; }
-    public int UserId { get; set; }
+    public string? UserId { get; set; }
     
     [MaxLength(50)]
     public required string Action  { get; set; }

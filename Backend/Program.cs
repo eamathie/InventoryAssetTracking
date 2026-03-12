@@ -28,7 +28,7 @@ builder.Services.AddDbContext<InventoryAssetContext>(options =>
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
 var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-var key = Encoding.UTF8.GetBytes(jwtKey);
+var key = Encoding.UTF8.GetBytes(jwtKey!); // jwtKey cannot be null, as DotEnvLoader.Load already checks this
 
 builder.Services.AddAuthentication(options =>
     {
@@ -60,10 +60,7 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<InventoryAssetContext>();
     await IdentitySeeder.SeedRolesAndAdmin(scope.ServiceProvider);
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

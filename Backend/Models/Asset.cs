@@ -29,7 +29,7 @@ public class Asset
     public required StatusSet Status  { get; set; }
     
     public User? User { get; set; }
-    public int UserId { get; set; }
+    public string? UserId { get; set; }
     
     [MaxLength(100)]
     public required string QrCodePath { get; set; }
