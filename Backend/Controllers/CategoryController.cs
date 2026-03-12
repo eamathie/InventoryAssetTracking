@@ -64,4 +64,20 @@ public class CategoryController(ICategoryService service) : ControllerBase
             return Conflict(new { message = ex.Message });
         }
     }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Category>> Update(int id, CategoryDto categoryDto)
+    {
+        try
+        {
+            var updated = await service.UpdateAsync(id, categoryDto);
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }
