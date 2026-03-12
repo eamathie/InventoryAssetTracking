@@ -19,7 +19,7 @@ public class Asset
     public required string Name { get; set; }
     
     public required Category Category { get; set; }
-    public required int CategoryId { get; set; }
+    public int CategoryId { get; set; }
     
     [MaxLength(100)] 
     public required string SerialNumber { get; set; }
@@ -28,7 +28,7 @@ public class Asset
     
     public required StatusSet Status  { get; set; }
     
-    public IdentityUser? User { get; set; }
+    public User? User { get; set; }
     public int UserId { get; set; }
     
     [MaxLength(100)]
@@ -40,6 +40,10 @@ public class Asset
     public required DateTime CreatedAt { get; set; }
     
     public required DateTime UpdatedAt { get; set; }
+    
+    public ICollection<AssetHistory>? AssetHistory { get; set; }
+    
+    public ICollection<Checkout>? Checkout { get; set; }
     
     
     

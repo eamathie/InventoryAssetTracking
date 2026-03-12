@@ -11,7 +11,7 @@ public class IdentitySeeder
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         
         // Add roles if they don't exist already
-        string[] roles = ["Admin", "User"];
+        string[] roles = ["Admin", "Employee"];
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))

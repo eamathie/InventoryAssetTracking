@@ -9,6 +9,9 @@ public class InventoryAssetContext: IdentityDbContext<IdentityUser>
 {
     public DbSet<Category> Categories { get; set; }
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<Checkout> Checkouts { get; set; }
+    public DbSet<AssetHistory> AssetHistories { get; set; }
+    
     public InventoryAssetContext(DbContextOptions<InventoryAssetContext> options) : base(options)
     {
         
@@ -16,6 +19,10 @@ public class InventoryAssetContext: IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<User>()
+            .Property(a => a.CreatedAt)
+            .HasDefaultValueSql("getdate()");
+        
         builder.Entity<Asset>()
             .Property(a => a.Status)
             .HasConversion<string>();
@@ -28,6 +35,8 @@ public class InventoryAssetContext: IdentityDbContext<IdentityUser>
             .Property(a => a.UpdatedAt)
             .HasDefaultValueSql("getdate()");
         
-        
+        builder.Entity<Checkout>()
+            .Property(c => c.CheckedOutAt)
+            .HasDefaultValueSql("getdate()");
     }
 }
