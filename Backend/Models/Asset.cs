@@ -1,0 +1,47 @@
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+
+namespace InventoryAssetTracking.Models;
+
+public class Asset
+{
+    public enum StatusSet
+    {
+        Active,
+        InRepair,
+        Retired
+    }
+    
+    [Key] 
+    public int Id { get; set; }
+    
+    [MaxLength(80)] 
+    public required string Name { get; set; }
+    
+    public required Category Category { get; set; }
+    public required int CategoryId { get; set; }
+    
+    [MaxLength(100)] 
+    public required string SerialNumber { get; set; }
+    
+    public required DateOnly PurchaseDate { get; set; }
+    
+    public required StatusSet Status  { get; set; }
+    
+    public IdentityUser? User { get; set; }
+    public int UserId { get; set; }
+    
+    [MaxLength(100)]
+    public required string QrCodePath { get; set; }
+    
+    [MaxLength(100)]
+    public required string Notes { get; set; }
+    
+    public required DateTime CreatedAt { get; set; }
+    
+    public required DateTime UpdatedAt { get; set; }
+    
+    
+    
+    
+}
