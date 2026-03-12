@@ -1,6 +1,10 @@
 using System.Text;
 using InventoryAssetTracking;
 using InventoryAssetTracking.Models;
+using InventoryAssetTracking.Repositories;
+using InventoryAssetTracking.Repositories.Interfaces;
+using InventoryAssetTracking.Services;
+using InventoryAssetTracking.Services.Interfaces;
 using InventoryAssetTracking.Tools;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -16,8 +20,10 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
-// Set up IdentitySeeder
+// Set up dependency injection
 builder.Services.AddTransient<IdentitySeeder>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 // Set up connection to db

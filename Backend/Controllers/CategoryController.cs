@@ -1,29 +1,42 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
+using InventoryAssetTracking.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace InventoryAssetTracking.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CategoryController(InventoryAssetContext context) : ControllerBase
+public class CategoryController(ICategoryService service) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
-    public async Task<ActionResult<Category>> Get()
+    public async Task<ActionResult<Category>> GetAll()
     {
-        var categories = await context.Categories.ToListAsync();
+        var categories = await service.GetAllAsync();
         return Ok(categories);
     }
 
-    [HttpGet("{categoryName}")]
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Category>> GetById(int id)
+    {
+        var category = await service.GetByIdAsync(id);
+        
+        if (category == null)
+            return NotFound();
+        
+        return Ok(category);
+    }
+
+    [HttpGet("name/{categoryName}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Category>> GetByName(string categoryName)
     {
-        var category = await context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
+        var category =  await service.GetByNameAsync(categoryName);
         
         if (category == null)
             return NotFound();
@@ -36,18 +49,19 @@ public class CategoryController(InventoryAssetContext context) : ControllerBase
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<Category>> Create(CategoryDto categoryDto)
     {
-        var exists  = await context.Categories
-            .AnyAsync(c => c.Name.ToLower().Trim()
-                .Equals(categoryDto.Name.ToLower().Trim()));
-        
-        if (exists)
-            return Conflict(new { message =  "Category already exists." });
-        
-        var category = new Category{ Name =  categoryDto.Name.Trim() };
-        
-        context.Categories.Add(category);
-        await context.SaveChangesAsync();
-        
-        return CreatedAtAction(nameof(GetByName), new  { categoryName = category.Name }, category);
+        try
+        {
+            var category = await service.CreateAsync(categoryDto);
+
+            return CreatedAtAction(
+                nameof(GetByName),
+                new { categoryName = category.Name },
+                category
+            );
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 }
