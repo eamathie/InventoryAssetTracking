@@ -64,9 +64,9 @@ public class CategoryController(ICategoryService service) : ControllerBase
                 category
             );
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException e)
         {
-            return Conflict(new { message = ex.Message });
+            return Conflict(new { message = e.Message });
         }
     }
 
@@ -81,9 +81,26 @@ public class CategoryController(ICategoryService service) : ControllerBase
             var updated = await service.UpdateAsync(id, categoryDto);
             return Ok(updated);
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException e)
         {
-            return NotFound(ex.Message);
+            return NotFound(e.Message);
+        }
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(typeof(Category), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Category>> Delete(int id)
+    {
+        try
+        {
+            await service.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
         }
     }
 }

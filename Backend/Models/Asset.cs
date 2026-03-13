@@ -17,8 +17,8 @@ public class Asset
     
     [MaxLength(80)] 
     public required string Name { get; set; }
-    
-    public required Category Category { get; set; }
+
+    public Category Category { get; set; } = null!;
     public int CategoryId { get; set; }
     
     [MaxLength(100)] 

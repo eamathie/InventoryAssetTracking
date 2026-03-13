@@ -22,8 +22,15 @@ builder.Services.AddSwaggerGen();
 
 // Set up dependency injection
 builder.Services.AddTransient<IdentitySeeder>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
+
+builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 
 
 // Set up connection to db

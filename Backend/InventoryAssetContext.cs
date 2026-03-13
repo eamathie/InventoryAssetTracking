@@ -30,6 +30,10 @@ public class InventoryAssetContext: IdentityDbContext<User>
             .HasConversion<string>();
 
         builder.Entity<Asset>()
+            .HasIndex(a => a.SerialNumber)
+            .IsUnique();
+
+        builder.Entity<Asset>()
             .Property(a => a.CreatedAt)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
         
@@ -40,5 +44,6 @@ public class InventoryAssetContext: IdentityDbContext<User>
         builder.Entity<Checkout>()
             .Property(c => c.CheckedOutAt)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        
     }
 }

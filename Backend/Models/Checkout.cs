@@ -6,11 +6,11 @@ public class Checkout
 {
     public int Id { get; set; }
     
-    public required Asset Asset { get; set; }
     public int AssetId { get; set; }
-    
-    public required User User { get; set; }
-    public string UserId { get; set; }
+    public Asset Asset { get; set; } = null!;
+
+    public string UserId { get; set; } = null!;
+    public User User { get; set; } = null!;
     
     public required DateTime CheckedOutAt { get; set; }
     
