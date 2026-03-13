@@ -27,12 +27,12 @@ public class Asset
     public required DateOnly PurchaseDate { get; set; }
     
     public required StatusSet Status  { get; set; }
-    
-    public User? User { get; set; }
-    public string? UserId { get; set; }
+
+    public User? User { get; set; } = null!;
+    public string UserId { get; set; } = null!;
     
     [MaxLength(100)]
-    public required string QrCodePath { get; set; }
+    public string? QrCodePath { get; set; } 
     
     [MaxLength(100)]
     public required string Notes { get; set; }

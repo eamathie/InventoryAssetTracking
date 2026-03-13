@@ -35,7 +35,7 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
             CategoryId = dto.CategoryId,
             PurchaseDate = dto.PurchaseDate,
             Status = Asset.StatusSet.Active,
-            QrCodePath = null,
+            QrCodePath = null, // set below
             Notes = dto.Notes,
             CreatedAt = default,
             UpdatedAt = default,

@@ -24,7 +24,7 @@ public class CheckoutService(ICheckoutRepository repository) : ICheckoutService
         var checkouts = await repository.GetAllAsync();
         var checkout = checkouts.First(c => c.AssetId == dto.AssetId && c.CheckedOutAt == dto.CheckedOutAt);
         if (checkout != null)
-            throw new InvalidOperationException($"Checkout for asset with id {checkout.AssetId} already exists at {checkout.CheckedOutAt}");
+            throw new InvalidOperationException($"Checkout for asset with id {checkout.AssetId} checked out at {checkout.CheckedOutAt} already exists");
         
         checkout = new Checkout
         {
@@ -37,13 +37,27 @@ public class CheckoutService(ICheckoutRepository repository) : ICheckoutService
         return checkout;
     }
 
-    public Task UpdateAsync(int id, CheckoutDto dto)
+    public async Task<Checkout> UpdateAsync(int id, CheckoutDto dto)
     {
-        throw new NotImplementedException();
+        var checkout = await repository.GetByIdAsync(id);
+        if (checkout == null)
+            throw new  InvalidOperationException($"Checkout for asset with id {id} does not exist");
+        
+        checkout.UserId = dto.UserId;
+        checkout.AssetId = dto.AssetId;
+        checkout.CheckedOutAt = dto.CheckedOutAt;
+        checkout.CheckedInAt = dto.CheckedInAt;
+        
+        await repository.UpdateAsync(checkout);
+        return checkout;
     }
 
-    public Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var checkout = await repository.GetByIdAsync(id);
+        if (checkout == null)
+            throw new  InvalidOperationException($"Checkout for asset with id {id} does not exist");
+        
+        await repository.DeleteAsync(checkout);
     }
 }
