@@ -22,6 +22,7 @@ builder.Services.AddSwaggerGen();
 
 // Set up dependency injection
 builder.Services.AddTransient<IdentitySeeder>();
+builder.Services.AddTransient<AssetQrGenerator>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

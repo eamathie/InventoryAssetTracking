@@ -22,7 +22,7 @@ public class Asset
     public int CategoryId { get; set; }
     
     [MaxLength(100)] 
-    public required string SerialNumber { get; set; }
+    public string SerialNumber { get; set; } = null!;
     
     public required DateOnly PurchaseDate { get; set; }
     
