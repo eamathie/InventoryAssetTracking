@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -12,17 +13,17 @@ namespace InventoryAssetTracking.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(UserManager<User> userManager, IConfiguration config) : ControllerBase
+public class AuthController(UserManager<User> userManager) : ControllerBase
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(UserRegistrationDto dto)
     {
-        if (!dto.Name.All(char.IsLetter))
+        if (!dto.Name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
             return BadRequest("Name contains invalid characters");
 
-        var user = new User { UserName = dto.Name, Email = dto.Email, CreatedAt =  DateTime.Now };
+        var user = new User { Name = dto.Name.Trim(), UserName = dto.Email, Email = dto.Email, CreatedAt =  DateTime.UtcNow };
         var result = await userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
@@ -53,8 +54,61 @@ public class AuthController(UserManager<User> userManager, IConfiguration config
             expiration = token.ValidTo
         });
     }
-    
 
+
+    [Authorize]
+    [HttpDelete("delete")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if (currentUserId != id && !User.IsInRole("Admin"))
+            return Forbid($"You are not authorized to delete this user");
+        
+        var user = await userManager.FindByIdAsync(id);
+        if (user == null)
+            return NotFound($"User not found");
+        
+        await userManager.DeleteAsync(user);
+        return Ok("User deleted successfully");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPatch("update")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(string id, UserRegistrationDto dto)
+    {
+        var user =  await userManager.FindByIdAsync(id);
+        if (user == null)
+            return NotFound($"User not found");
+        
+        user.Email = dto.Email;
+        user.UserName = dto.Email;
+        user.Name = dto.Name;
+        
+        var result = await userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var passResult = await userManager.ResetPasswordAsync(user, token, dto.Password);
+            
+            if (!passResult.Succeeded)
+                return BadRequest(passResult.Errors);
+        }
+        
+        return Ok("User updated successfully");
+        
+    }
+    
+    
     private JwtSecurityToken GenerateJwtToken(List<Claim> claims)
     {
         var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
@@ -68,6 +122,5 @@ public class AuthController(UserManager<User> userManager, IConfiguration config
             claims: claims,
             signingCredentials: creds
         );
-
     }
 }

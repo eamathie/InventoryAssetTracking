@@ -2,6 +2,7 @@
 using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryAssetTracking.Controllers;
@@ -10,6 +11,7 @@ namespace InventoryAssetTracking.Controllers;
 [Route("[controller]")]
 public class CategoryController(ICategoryService service) : ControllerBase
 {
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     public async Task<ActionResult<Category>> GetAll()
@@ -18,6 +20,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
         return Ok(categories);
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
@@ -31,6 +34,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
         return Ok(category);
     }
 
+    [Authorize]
     [HttpGet("name/{categoryName}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
@@ -44,6 +48,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
         return  Ok(category);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ProducesResponseType(typeof(Category), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status409Conflict)]
@@ -65,6 +70,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]

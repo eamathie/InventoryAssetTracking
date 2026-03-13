@@ -24,6 +24,7 @@ public class IdentitySeeder(RoleManager<IdentityRole> roleManager, UserManager<U
         {
             adminUser = new User
             {
+                Name = "Admin",
                 UserName = adminEmail,
                 Email = adminEmail,
                 CreatedAt = DateTime.UtcNow
