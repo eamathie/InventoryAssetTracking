@@ -5,7 +5,7 @@
 
 
 # generated qr codes
-Backend/wwwroot/QrCodes
+Backend/wwwroot/QrCodes/*
 
 # dotenv files
 .env
