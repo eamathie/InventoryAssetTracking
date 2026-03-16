@@ -3,10 +3,11 @@ using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Repositories.Interfaces;
 using InventoryAssetTracking.Services.Interfaces;
 using InventoryAssetTracking.Tools;
+using Microsoft.AspNetCore.Identity;
 
 namespace InventoryAssetTracking.Services;
 
-public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrGenerator) : IAssetService
+public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrGenerator, EntityChecker entityChecker) : IAssetService
 {
     public async Task<Asset?> GetByIdAsync(int id)
     {
@@ -28,6 +29,11 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
 
     public async Task<Asset> CreateAsync(AssetDto dto)
     {
+        if (!await entityChecker.UserExistsByIdAsync(dto.UserId))
+            throw new InvalidOperationException($"User with id {dto.UserId} not found");
+        if (!await entityChecker.CategoryExistsByIdAsync(dto.CategoryId))
+            throw new InvalidOperationException($"Category with id {dto.CategoryId} not found");
+        
         var asset = new Asset
         {
             Name = dto.Name,
@@ -39,6 +45,7 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
             Notes = dto.Notes,
             CreatedAt = default,
             UpdatedAt = default,
+            SerialNumber = await GenerateSerialNumAsync()
         };
         await repository.CreateAsync(asset);
         
@@ -75,5 +82,21 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
             throw new InvalidOperationException($"Asset with id {id} not found");
         
         await repository.DeleteAsync(asset);
+    }
+    
+    /// <summary>
+    /// Helper method that generates unique serial numbers for assets
+    /// </summary>
+    /// <returns></returns>
+    private async Task<string> GenerateSerialNumAsync()
+    {
+        var last = await repository.GetAllAsync();
+        var lastSerialNum = last.OrderByDescending(a => a.Id).Select(a => a.SerialNumber).FirstOrDefault();
+        
+        var nextNumber = lastSerialNum == null
+            ? 1
+            : int.Parse(lastSerialNum.Split('-')[1]) + 1;
+
+        return $"ASSET-{nextNumber:D4}"; // 4-digits, ex: ASSET-0001
     }
 }

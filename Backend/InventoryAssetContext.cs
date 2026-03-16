@@ -23,7 +23,8 @@ public class InventoryAssetContext: IdentityDbContext<User>
         
         builder.Entity<User>()
             .Property(a => a.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
         
         builder.Entity<Asset>()
             .Property(a => a.Status)
@@ -35,15 +36,23 @@ public class InventoryAssetContext: IdentityDbContext<User>
 
         builder.Entity<Asset>()
             .Property(a => a.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
         
         builder.Entity<Asset>()
             .Property(a => a.UpdatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
+
         builder.Entity<Checkout>()
             .Property(c => c.CheckedOutAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
+
+        builder.Entity<AssetHistory>()
+            .Property(h => h.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
+
     }
 }

@@ -1,17 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using InventoryAssetTracking.Models;
 
-namespace InventoryAssetTracking.Models;
+namespace InventoryAssetTracking.DTOs;
 
-public class AssetHistory
+public class AssetHistoryDto
 {
-    public int Id { get; set; }
-
-    public Asset Asset { get; set; } = null!;
     public int AssetId { get; set; }
-
-    [MaxLength(80)]
     public string? UserId { get; set; }
-    public User? User { get; set; }
     
     [MaxLength(50)]
     public required string Action  { get; set; }
@@ -20,8 +15,4 @@ public class AssetHistory
     public string? Details  { get; set; }
     
     public DateTime CreatedAt { get; set; }
-    
-    
-    
-    
 }

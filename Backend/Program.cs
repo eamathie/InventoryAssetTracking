@@ -24,6 +24,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IdentitySeeder>();
 builder.Services.AddTransient<AssetQrGenerator>();
 
+builder.Services.AddScoped<EntityChecker>();
+
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
@@ -32,6 +34,10 @@ builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
 
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
+
+builder.Services.AddScoped<IAssetHistoryService, AssetHistoryService>();
+builder.Services.AddScoped<IAssetHistoryRepository, AssetHistoryRepository>();
+
 
 
 // Set up connection to db
