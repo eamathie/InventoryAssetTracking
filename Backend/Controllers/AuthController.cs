@@ -42,12 +42,15 @@ public class AuthController(UserManager<User> userManager) : ControllerBase
         if (user == null || !await userManager.CheckPasswordAsync(user, dto.Password))
             return Unauthorized($"Invalid email or password");
 
+        var userRoles = await userManager.GetRolesAsync(user);
         var authClaims = new List<Claim>
         {
             new(ClaimTypes.Name, user.UserName),
             new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+        
+        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
         
         var token = GenerateJwtToken(authClaims);
         return Ok(new
