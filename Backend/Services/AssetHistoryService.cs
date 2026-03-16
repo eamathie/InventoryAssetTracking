@@ -3,36 +3,37 @@ using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Repositories.Interfaces;
 using InventoryAssetTracking.Services.Interfaces;
 using InventoryAssetTracking.Tools;
+using MapsterMapper;
 
 namespace InventoryAssetTracking.Services;
 
-public class AssetHistoryService(IAssetHistoryRepository repository, EntityChecker entityChecker) : IAssetHistoryService
+public class AssetHistoryService(IAssetHistoryRepository repository, EntityChecker entityChecker, IMapper mapper) : IAssetHistoryService
 {
-    public async Task<List<AssetHistory>> GetAllAsync()
+    public async Task<List<AssetHistoryDto>> GetAllAsync()
     {
         var assetHistories = await repository.GetAllAsync();
-        return assetHistories;
+        return mapper.Map<List<AssetHistoryDto>>(assetHistories);
     }
 
-    public async Task<List<AssetHistory>> GetByAssetIdAsync(int assetId)
+    public async Task<List<AssetHistoryDto>> GetByAssetIdAsync(int assetId)
     {
         var assetHistories = await repository.GetByAssetIdAsync(assetId);
-        return assetHistories;
+        return mapper.Map<List<AssetHistoryDto>>(assetHistories);
     }
 
-    public async Task<AssetHistory?> GetByIdAsync(int id)
+    public async Task<AssetHistoryDto?> GetByIdAsync(int id)
     {
         var assetHistory = await repository.GetByIdAsync(id);
-        return assetHistory;
+        return assetHistory == null ? null : mapper.Map<AssetHistoryDto>(assetHistory);
     }
 
-    public async Task<List<AssetHistory>> GetByDateAsync(DateOnly date)
+    public async Task<List<AssetHistoryDto>> GetByDateAsync(DateOnly date)
     {
         var assetHistories =  await repository.GetByDateAsync(date);
-        return assetHistories;
+        return mapper.Map<List<AssetHistoryDto>>(assetHistories);
     }
 
-    public async Task<AssetHistory> CreateAsync(AssetHistoryDto dto)
+    public async Task<AssetHistoryDto> CreateAsync(AssetHistoryDto dto)
     {
         if (dto.UserId != null && !await entityChecker.UserExistsByIdAsync(dto.UserId))
             throw new InvalidOperationException($"User {dto.UserId} does not exist");
@@ -48,10 +49,10 @@ public class AssetHistoryService(IAssetHistoryRepository repository, EntityCheck
         };
         
         await repository.CreateAsync(assetHistory);
-        return assetHistory;
+        return mapper.Map<AssetHistoryDto>(assetHistory);
     }
 
-    public async Task<AssetHistory> UpdateAsync(int id, AssetHistoryDto dto)
+    public async Task<AssetHistoryDto> UpdateAsync(int id, AssetHistoryDto dto)
     {
         var assetHistory = await repository.GetByIdAsync(id);
         if (assetHistory == null)
@@ -68,7 +69,7 @@ public class AssetHistoryService(IAssetHistoryRepository repository, EntityCheck
         assetHistory.CreatedAt = dto.CreatedAt;
         
         await repository.UpdateAsync(assetHistory);
-        return assetHistory;
+        return mapper.Map<AssetHistoryDto>(assetHistory);
     }
 
     public async Task DeleteAsync(int id)
