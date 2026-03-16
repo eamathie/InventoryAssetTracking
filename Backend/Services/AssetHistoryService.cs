@@ -16,7 +16,7 @@ public class AssetHistoryService(IAssetHistoryRepository repository, EntityCheck
 
     public async Task<List<AssetHistory>> GetByAssetIdAsync(int assetId)
     {
-        var assetHistories = await  repository.GetByAssetIdAsync(assetId);
+        var assetHistories = await repository.GetByAssetIdAsync(assetId);
         return assetHistories;
     }
 
