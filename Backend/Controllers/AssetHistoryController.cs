@@ -1,6 +1,5 @@
 ﻿using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Services.Interfaces;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +7,7 @@ namespace InventoryAssetTracking.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AssetHistoryController(IAssetHistoryService service, IMapper mapper) : ControllerBase
+public class AssetHistoryController(IAssetHistoryService service) : ControllerBase
 {
     [Authorize]
     [HttpGet]

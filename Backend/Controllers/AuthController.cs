@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace InventoryAssetTracking.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(UserManager<User> userManager) : ControllerBase
+public class AuthController(UserManager<User> userManager, IMapper mapper) : ControllerBase
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -115,18 +116,30 @@ public class AuthController(UserManager<User> userManager) : ControllerBase
     [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<User>>> Get()
+    public async Task<ActionResult<List<UserResponseDto>>> Get()
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
-        // this is very bad and should never happen. impossible if tokens include the proper claims :)
         if (currentUserId is null)
             return Unauthorized("User ID claim missing");
-        
-        if (User.IsInRole("Admin"))
-            return Ok(await userManager.Users.ToListAsync());
-        return Ok(await userManager.FindByIdAsync(currentUserId));
+
+        var isAdmin = User.IsInRole("Admin");
+        var users = new List<User>();
+        if (isAdmin)
+            users = await userManager.Users.ToListAsync();
+        else
+        {
+            var user = await userManager.FindByIdAsync(currentUserId);
+            if (user is null)
+                return NotFound("User not found");
+            
+            users.Add(user);
+        }
+
+        var response = mapper.Map<List<UserResponseDto>>(users);
+        return Ok(response);
+
     }
+
     
     private JwtSecurityToken GenerateJwtToken(List<Claim> claims)
     {
