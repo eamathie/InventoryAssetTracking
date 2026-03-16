@@ -9,31 +9,31 @@ namespace InventoryAssetTracking.Services;
 
 public class AssetHistoryService(IAssetHistoryRepository repository, EntityChecker entityChecker, IMapper mapper) : IAssetHistoryService
 {
-    public async Task<List<AssetHistoryDto>> GetAllAsync()
+    public async Task<List<AssetHistoryResponseDto>> GetAllAsync()
     {
         var assetHistories = await repository.GetAllAsync();
-        return mapper.Map<List<AssetHistoryDto>>(assetHistories);
+        return mapper.Map<List<AssetHistoryResponseDto>>(assetHistories);
     }
 
-    public async Task<List<AssetHistoryDto>> GetByAssetIdAsync(int assetId)
+    public async Task<List<AssetHistoryResponseDto>> GetByAssetIdAsync(int assetId)
     {
         var assetHistories = await repository.GetByAssetIdAsync(assetId);
-        return mapper.Map<List<AssetHistoryDto>>(assetHistories);
+        return mapper.Map<List<AssetHistoryResponseDto>>(assetHistories);
     }
 
-    public async Task<AssetHistoryDto?> GetByIdAsync(int id)
+    public async Task<AssetHistoryResponseDto?> GetByIdAsync(int id)
     {
         var assetHistory = await repository.GetByIdAsync(id);
-        return assetHistory == null ? null : mapper.Map<AssetHistoryDto>(assetHistory);
+        return assetHistory == null ? null : mapper.Map<AssetHistoryResponseDto>(assetHistory);
     }
 
-    public async Task<List<AssetHistoryDto>> GetByDateAsync(DateOnly date)
+    public async Task<List<AssetHistoryResponseDto>> GetByDateAsync(DateOnly date)
     {
         var assetHistories =  await repository.GetByDateAsync(date);
-        return mapper.Map<List<AssetHistoryDto>>(assetHistories);
+        return mapper.Map<List<AssetHistoryResponseDto>>(assetHistories);
     }
 
-    public async Task<AssetHistoryDto> CreateAsync(AssetHistoryDto dto)
+    public async Task<AssetHistoryResponseDto> CreateAsync(AssetHistoryDto dto)
     {
         if (dto.UserId != null && !await entityChecker.UserExistsByIdAsync(dto.UserId))
             throw new InvalidOperationException($"User {dto.UserId} does not exist");
@@ -49,10 +49,10 @@ public class AssetHistoryService(IAssetHistoryRepository repository, EntityCheck
         };
         
         await repository.CreateAsync(assetHistory);
-        return mapper.Map<AssetHistoryDto>(assetHistory);
+        return mapper.Map<AssetHistoryResponseDto>(assetHistory);
     }
 
-    public async Task<AssetHistoryDto> UpdateAsync(int id, AssetHistoryDto dto)
+    public async Task<AssetHistoryResponseDto> UpdateAsync(int id, AssetHistoryDto dto)
     {
         var assetHistory = await repository.GetByIdAsync(id);
         if (assetHistory == null)
@@ -69,7 +69,7 @@ public class AssetHistoryService(IAssetHistoryRepository repository, EntityCheck
         assetHistory.CreatedAt = dto.CreatedAt;
         
         await repository.UpdateAsync(assetHistory);
-        return mapper.Map<AssetHistoryDto>(assetHistory);
+        return mapper.Map<AssetHistoryResponseDto>(assetHistory);
     }
 
     public async Task DeleteAsync(int id)

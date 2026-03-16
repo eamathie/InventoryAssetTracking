@@ -5,11 +5,11 @@ namespace InventoryAssetTracking.Services.Interfaces;
 
 public interface IAssetHistoryService
 {
-    public Task<List<AssetHistoryDto>> GetAllAsync();
-    public Task<List<AssetHistoryDto>> GetByAssetIdAsync(int assetId);
-    public Task<List<AssetHistoryDto>> GetByDateAsync(DateOnly date);
-    public Task<AssetHistoryDto?> GetByIdAsync(int id);
-    public Task<AssetHistoryDto> CreateAsync(AssetHistoryDto dto);
-    public Task<AssetHistoryDto> UpdateAsync(int id, AssetHistoryDto dto);
+    public Task<List<AssetHistoryResponseDto>> GetAllAsync();
+    public Task<List<AssetHistoryResponseDto>> GetByAssetIdAsync(int assetId);
+    public Task<List<AssetHistoryResponseDto>> GetByDateAsync(DateOnly date);
+    public Task<AssetHistoryResponseDto?> GetByIdAsync(int id);
+    public Task<AssetHistoryResponseDto> CreateAsync(AssetHistoryDto dto);
+    public Task<AssetHistoryResponseDto> UpdateAsync(int id, AssetHistoryDto dto);
     public Task DeleteAsync(int id);
 }

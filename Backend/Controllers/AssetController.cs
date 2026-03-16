@@ -1,6 +1,7 @@
 ﻿using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Services.Interfaces;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace InventoryAssetTracking.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AssetController(IAssetService service) : ControllerBase
+public class AssetController(IAssetService service, IMapper mapper) : ControllerBase
 {
 
     [Authorize]
@@ -49,13 +50,13 @@ public class AssetController(IAssetService service) : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<Asset>> Create(AssetDto dto)
+    public async Task<ActionResult<AssetResponseDto>> Create(AssetDto dto)
     {
         try
         {
             var asset = await service.CreateAsync(dto);
-            return Created();
-            //return CreatedAtAction(nameof(Get), new { id = asset.Id }, asset);
+            return CreatedAtAction(nameof(Get), new { id = asset.Id }, asset);
+
         }
         catch (InvalidOperationException e)
         {
@@ -68,7 +69,7 @@ public class AssetController(IAssetService service) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Asset>> Update(int id, AssetDto dto)
+    public async Task<ActionResult<AssetResponseDto>> Update(int id, AssetDto dto)
     {
         try
         {

@@ -1,6 +1,6 @@
 ﻿using InventoryAssetTracking.DTOs;
-using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Services.Interfaces;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,12 +8,12 @@ namespace InventoryAssetTracking.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AssetHistoryController(IAssetHistoryService service) : ControllerBase
+public class AssetHistoryController(IAssetHistoryService service, IMapper mapper) : ControllerBase
 {
     [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<AssetHistory>>> Get()
+    public async Task<ActionResult<List<AssetHistoryResponseDto>>> Get()
     {
         var assetHistories = await service.GetAllAsync();
         return Ok(assetHistories);
@@ -22,7 +22,7 @@ public class AssetHistoryController(IAssetHistoryService service) : ControllerBa
     [Authorize]
     [HttpGet("asset/{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<AssetHistory>>> GetByAssetId(int id)
+    public async Task<ActionResult<List<AssetHistoryResponseDto>>> GetByAssetId(int id)
     {
         var assetHistories = await service.GetByAssetIdAsync(id);
         return Ok(assetHistories);
@@ -32,7 +32,7 @@ public class AssetHistoryController(IAssetHistoryService service) : ControllerBa
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AssetHistory>> Get(int id)
+    public async Task<ActionResult<AssetHistoryResponseDto>> Get(int id)
     {
         var assetHistory = await service.GetByIdAsync(id);
         if (assetHistory == null)
@@ -43,7 +43,7 @@ public class AssetHistoryController(IAssetHistoryService service) : ControllerBa
     [Authorize]
     [HttpGet("by-date")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<AssetHistory>>> GetByDate([FromQuery] DateOnly date)
+    public async Task<ActionResult<List<AssetHistoryResponseDto>>> GetByDate([FromQuery] DateOnly date)
     {
         var assetHistories = await service.GetByDateAsync(date);
         return Ok(assetHistories);
@@ -53,7 +53,7 @@ public class AssetHistoryController(IAssetHistoryService service) : ControllerBa
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<AssetHistory>> Post(AssetHistoryDto dto)
+    public async Task<ActionResult<AssetHistoryResponseDto>> Post(AssetHistoryDto dto)
     {
         try
         {
@@ -70,7 +70,7 @@ public class AssetHistoryController(IAssetHistoryService service) : ControllerBa
     [HttpPatch]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<AssetHistory>> Patch(int id, AssetHistoryDto dto)
+    public async Task<ActionResult<AssetHistoryResponseDto>> Patch(int id, AssetHistoryDto dto)
     {
         try
         {

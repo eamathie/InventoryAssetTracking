@@ -8,19 +8,19 @@ namespace InventoryAssetTracking.Services;
 
 public class CheckoutService(ICheckoutRepository repository, IMapper mapper) : ICheckoutService
 {
-    public async Task<List<CheckoutDto>> GetAllAsync()
+    public async Task<List<CheckoutResponseDto>> GetAllAsync()
     {
         var checkouts = await repository.GetAllAsync();
-        return mapper.Map<List<CheckoutDto>>(checkouts);
+        return mapper.Map<List<CheckoutResponseDto>>(checkouts);
     }
 
-    public async Task<CheckoutDto?> GetByIdAsync(int id)
+    public async Task<CheckoutResponseDto?> GetByIdAsync(int id)
     {
         var checkout = await repository.GetByIdAsync(id);
-        return checkout == null ? null : mapper.Map<CheckoutDto>(checkout);
+        return checkout == null ? null : mapper.Map<CheckoutResponseDto>(checkout);
     }
 
-    public async Task<CheckoutDto> CreateAsync(CheckoutDto dto)
+    public async Task<CheckoutResponseDto> CreateAsync(CheckoutDto dto)
     {
         var checkouts = await repository.GetAllAsync();
         var checkout = checkouts.First(c => c.AssetId == dto.AssetId && c.CheckedOutAt == dto.CheckedOutAt);
@@ -35,10 +35,10 @@ public class CheckoutService(ICheckoutRepository repository, IMapper mapper) : I
         };
         
         await repository.CreateAsync(checkout);
-        return mapper.Map<CheckoutDto>(checkout);
+        return mapper.Map<CheckoutResponseDto>(checkout);
     }
 
-    public async Task<CheckoutDto> UpdateAsync(int id, CheckoutDto dto)
+    public async Task<CheckoutResponseDto> UpdateAsync(int id, CheckoutDto dto)
     {
         var checkout = await repository.GetByIdAsync(id);
         if (checkout == null)
@@ -50,7 +50,7 @@ public class CheckoutService(ICheckoutRepository repository, IMapper mapper) : I
         checkout.CheckedInAt = dto.CheckedInAt;
         
         await repository.UpdateAsync(checkout);
-        return mapper.Map<CheckoutDto>(checkout);
+        return mapper.Map<CheckoutResponseDto>(checkout);
     }
 
     public async Task DeleteAsync(int id)

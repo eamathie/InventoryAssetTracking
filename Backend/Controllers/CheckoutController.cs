@@ -13,7 +13,7 @@ public class CheckoutController(ICheckoutService service) : ControllerBase
     [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<Checkout>> GetAll()
+    public async Task<ActionResult<CheckoutResponseDto>> GetAll()
     {
         var checkouts = await service.GetAllAsync();
         return Ok(checkouts);
@@ -23,7 +23,7 @@ public class CheckoutController(ICheckoutService service) : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Checkout>> GetById(int id)
+    public async Task<ActionResult<CheckoutResponseDto>> GetById(int id)
     {
         var checkout = await service.GetByIdAsync(id);
         if (checkout == null)
@@ -37,7 +37,7 @@ public class CheckoutController(ICheckoutService service) : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<Checkout>> Create(CheckoutDto dto)
+    public async Task<ActionResult<CheckoutResponseDto>> Create(CheckoutDto dto)
     {
         try
         {
@@ -57,7 +57,7 @@ public class CheckoutController(ICheckoutService service) : ControllerBase
     [HttpPatch("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Checkout>> Update(int id, CheckoutDto dto)
+    public async Task<ActionResult<CheckoutResponseDto>> Update(int id, CheckoutDto dto)
     {
         try
         {

@@ -9,25 +9,25 @@ namespace InventoryAssetTracking.Services;
 
 public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrGenerator, EntityChecker entityChecker, IMapper mapper) : IAssetService
 {
-    public async Task<AssetDto?> GetByIdAsync(int id)
+    public async Task<AssetResponseDto?> GetByIdAsync(int id)
     {
         var asset = await repository.GetByIdAsync(id);
-        return asset == null ? null : mapper.Map<AssetDto>(asset);
+        return asset == null ? null : mapper.Map<AssetResponseDto>(asset);
     }
 
-    public async Task<AssetDto?> GetByNameAsync(string assetName)
+    public async Task<AssetResponseDto?> GetByNameAsync(string assetName)
     {
         var asset = await repository.GetByNameAsync(assetName);
-        return asset == null ? null : mapper.Map<AssetDto>(asset);
+        return asset == null ? null : mapper.Map<AssetResponseDto>(asset);
     }
 
-    public async Task<List<AssetDto>> GetAllAsync()
+    public async Task<List<AssetResponseDto>> GetAllAsync()
     {
         var assets = await repository.GetAllAsync();
-        return mapper.Map<List<AssetDto>>(assets);
+        return mapper.Map<List<AssetResponseDto>>(assets);
     }
 
-    public async Task<AssetDto> CreateAsync(AssetDto dto)
+    public async Task<AssetResponseDto> CreateAsync(AssetDto dto)
     {
         if (!await entityChecker.UserExistsByIdAsync(dto.UserId))
             throw new InvalidOperationException($"User with id {dto.UserId} not found");
@@ -54,10 +54,10 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         asset.QrCodePath = qrCodePath;
         await repository.UpdateAsync(asset);
         
-        return mapper.Map<AssetDto>(asset);
+        return mapper.Map<AssetResponseDto>(asset);
     }
 
-    public async Task<AssetDto> UpdateAsync(int id, AssetDto dto)
+    public async Task<AssetResponseDto> UpdateAsync(int id, AssetDto dto)
     {
         var asset = await repository.GetByIdAsync(id);
         if (asset == null)
@@ -72,7 +72,7 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         asset.UpdatedAt = DateTime.UtcNow;
         
         await repository.UpdateAsync(asset);
-        return mapper.Map<AssetDto>(asset);
+        return mapper.Map<AssetResponseDto>(asset);
     }
 
     public async Task DeleteAsync(int id)

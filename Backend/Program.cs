@@ -1,6 +1,5 @@
 using System.Text;
 using InventoryAssetTracking;
-using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Repositories;
 using InventoryAssetTracking.Repositories.Interfaces;
@@ -91,6 +90,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetService<IdentitySeeder>();
+    if (seeder == null)
+        throw new InvalidOperationException("Could not access IdentitySeeder to initialise Admin profiles");
+
     await seeder.SeedRolesAsync();
 }
 

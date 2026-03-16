@@ -5,9 +5,9 @@ namespace InventoryAssetTracking.Services.Interfaces;
 
 public interface ICheckoutService
 {
-    public Task<List<CheckoutDto>> GetAllAsync();
-    public Task<CheckoutDto?> GetByIdAsync(int id);
-    public Task<CheckoutDto> CreateAsync(CheckoutDto dto);
-    public Task<CheckoutDto> UpdateAsync(int id, CheckoutDto dto);
+    public Task<List<CheckoutResponseDto>> GetAllAsync();
+    public Task<CheckoutResponseDto?> GetByIdAsync(int id);
+    public Task<CheckoutResponseDto> CreateAsync(CheckoutDto dto);
+    public Task<CheckoutResponseDto> UpdateAsync(int id, CheckoutDto dto);
     public Task DeleteAsync(int id);
 }
