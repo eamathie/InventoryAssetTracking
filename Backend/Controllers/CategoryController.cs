@@ -14,7 +14,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
     [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
-    public async Task<ActionResult<Category>> GetAll()
+    public async Task<ActionResult<CategoryResponseDto>> GetAll()
     {
         var categories = await service.GetAllAsync();
         return Ok(categories);
@@ -24,10 +24,9 @@ public class CategoryController(ICategoryService service) : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Category>> GetById(int id)
+    public async Task<ActionResult<CategoryResponseDto>> GetById(int id)
     {
         var category = await service.GetByIdAsync(id);
-        
         if (category == null)
             return NotFound();
         
@@ -38,10 +37,9 @@ public class CategoryController(ICategoryService service) : ControllerBase
     [HttpGet("name/{categoryName}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Category>> GetByName(string categoryName)
+    public async Task<ActionResult<CategoryResponseDto>> GetByName(string categoryName)
     {
         var category =  await service.GetByNameAsync(categoryName);
-        
         if (category == null)
             return NotFound();
         
@@ -52,12 +50,11 @@ public class CategoryController(ICategoryService service) : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(Category), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<Category>> Create(CategoryDto categoryDto)
+    public async Task<ActionResult<CategoryResponseDto>> Create(CategoryDto categoryDto)
     {
         try
         {
             var category = await service.CreateAsync(categoryDto);
-
             return CreatedAtAction(
                 nameof(GetByName),
                 new { categoryName = category.Name },
@@ -74,7 +71,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Category>> Update(int id, CategoryDto categoryDto)
+    public async Task<ActionResult<CategoryResponseDto>> Update(int id, CategoryDto categoryDto)
     {
         try
         {
@@ -91,7 +88,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
     [HttpDelete("{id:int}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(JSType.Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Category>> Delete(int id)
+    public async Task<ActionResult<CategoryResponseDto>> Delete(int id)
     {
         try
         {
