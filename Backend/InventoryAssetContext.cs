@@ -1,21 +1,15 @@
 ﻿using InventoryAssetTracking.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryAssetTracking;
 
-public class InventoryAssetContext: IdentityDbContext<User>
+public class InventoryAssetContext(DbContextOptions<InventoryAssetContext> options) : IdentityDbContext<User>(options)
 {
     public DbSet<Category> Categories { get; set; }
     public DbSet<Asset> Assets { get; set; }
     public DbSet<Checkout> Checkouts { get; set; }
     public DbSet<AssetHistory> AssetHistories { get; set; }
-    
-    public InventoryAssetContext(DbContextOptions<InventoryAssetContext> options) : base(options)
-    {
-        
-    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -49,11 +49,11 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         };
         await repository.CreateAsync(asset);
         
+        // generate QR code and update Asset
         var qrCodePath = await assetQrGenerator.GenerateAssetQrCode(asset.Id);
-        
         asset.QrCodePath = qrCodePath;
-        await repository.UpdateAsync(asset);
         
+        await repository.UpdateAsync(asset);
         return mapper.Map<AssetResponseDto>(asset);
     }
 
