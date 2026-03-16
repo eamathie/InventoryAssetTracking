@@ -14,9 +14,9 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         return asset;
     }
 
-    public async Task<Asset?> GetByNameAsync(string categoryName)
+    public async Task<Asset?> GetByNameAsync(string assetName)
     {
-        var asset = await repository.GetByNameAsync(categoryName);
+        var asset = await repository.GetByNameAsync(assetName);
         return asset;
     }
 
