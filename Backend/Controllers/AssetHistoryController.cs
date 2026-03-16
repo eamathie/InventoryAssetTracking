@@ -41,9 +41,9 @@ public class AssetHistoryController(IAssetHistoryService service) : ControllerBa
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("by-date")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<AssetHistory>>> Get(DateOnly date)
+    public async Task<ActionResult<List<AssetHistory>>> GetByDate([FromQuery] DateOnly date)
     {
         var assetHistories = await service.GetByDateAsync(date);
         return Ok(assetHistories);

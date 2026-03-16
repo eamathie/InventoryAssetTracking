@@ -24,10 +24,10 @@ public class AssetController(IAssetService service) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("by-name")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Asset>> Get(string name)
+    public async Task<ActionResult<Asset>> GetByName(string name)
     {
         var asset = await service.GetByNameAsync(name);
         if (asset == null)
