@@ -7,6 +7,7 @@ using InventoryAssetTracking.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace InventoryAssetTracking.Controllers;
@@ -44,6 +45,7 @@ public class AuthController(UserManager<User> userManager) : ControllerBase
         var authClaims = new List<Claim>
         {
             new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         
@@ -64,7 +66,6 @@ public class AuthController(UserManager<User> userManager) : ControllerBase
     public async Task<IActionResult> Delete(string id)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
         if (currentUserId != id && !User.IsInRole("Admin"))
             return Forbid($"You are not authorized to delete this user");
         
@@ -107,7 +108,22 @@ public class AuthController(UserManager<User> userManager) : ControllerBase
         return Ok("User updated successfully");
         
     }
-    
+
+    [Authorize]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<User>>> Get()
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        // this is very bad and should never happen. impossible if tokens include the proper claims :)
+        if (currentUserId is null)
+            return Unauthorized("User ID claim missing");
+        
+        if (User.IsInRole("Admin"))
+            return Ok(await userManager.Users.ToListAsync());
+        return Ok(await userManager.FindByIdAsync(currentUserId));
+    }
     
     private JwtSecurityToken GenerateJwtToken(List<Claim> claims)
     {
