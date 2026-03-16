@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Mapster" Version="10.0.0-pre02" />
+        <PackageReference Include="Mapster.DependencyInjection" Version="10.0.0-pre02" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.5" />
@@ -25,6 +27,7 @@
     <ItemGroup>
       <Folder Include="Migrations\" />
       <Folder Include="QrCodes\" />
+      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>

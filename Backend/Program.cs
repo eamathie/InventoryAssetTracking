@@ -1,11 +1,13 @@
 using System.Text;
 using InventoryAssetTracking;
+using InventoryAssetTracking.DTOs;
 using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Repositories;
 using InventoryAssetTracking.Repositories.Interfaces;
 using InventoryAssetTracking.Services;
 using InventoryAssetTracking.Services.Interfaces;
 using InventoryAssetTracking.Tools;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +40,8 @@ builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IAssetHistoryService, AssetHistoryService>();
 builder.Services.AddScoped<IAssetHistoryRepository, AssetHistoryRepository>();
 
-
+// Set up automapping between DTOs and models
+builder.Services.AddMapster();
 
 // Set up connection to db
 var root = Directory.GetCurrentDirectory();

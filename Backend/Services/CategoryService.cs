@@ -2,29 +2,31 @@
 using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Repositories.Interfaces;
 using InventoryAssetTracking.Services.Interfaces;
+using MapsterMapper;
 
 namespace InventoryAssetTracking.Services;
 
-public class CategoryService(ICategoryRepository repository) : ICategoryService
+public class CategoryService(ICategoryRepository repository, IMapper mapper) : ICategoryService
 {
-    public async Task<Category?> GetByIdAsync(int id)
+    public async Task<CategoryDto?> GetByIdAsync(int id)
     {
         var category = await repository.GetByIdAsync(id);
-        return category;
+        return category == null ? null : mapper.Map<CategoryDto>(category);
     }
 
-    public async Task<Category?> GetByNameAsync(string categoryName)
+    public async Task<CategoryDto?> GetByNameAsync(string categoryName)
     {
         var category = await repository.GetByNameAsync(categoryName);
-        return category;
+        return category == null ? null : mapper.Map<CategoryDto>(category);
     }
 
-    public async Task<List<Category>> GetAllAsync()
+    public async Task<List<CategoryDto>> GetAllAsync()
     {
-        return await repository.GetAllAsync();
+        var categories =  await repository.GetAllAsync();
+        return mapper.Map<List<CategoryDto>>(categories);
     }
 
-    public async Task<Category> CreateAsync(CategoryDto dto)
+    public async Task<CategoryDto> CreateAsync(CategoryDto dto)
     {
         var category = await repository.GetByNameAsync(dto.Name);
         if (category != null)
@@ -33,10 +35,10 @@ public class CategoryService(ICategoryRepository repository) : ICategoryService
         category = new Category { Name =  dto.Name };
         
         await  repository.CreateAsync(category);
-        return category;
+        return mapper.Map<CategoryDto>(category);
     }
 
-    public async Task<Category> UpdateAsync(int id, CategoryDto dto)
+    public async Task<CategoryDto> UpdateAsync(int id, CategoryDto dto)
     {
         var category = await repository.GetByIdAsync(id);
         if (category == null)
@@ -45,7 +47,7 @@ public class CategoryService(ICategoryRepository repository) : ICategoryService
         category.Name = dto.Name;
         await repository.UpdateAsync(category);
         
-        return category;
+        return mapper.Map<CategoryDto>(category);
     }
 
     public async Task DeleteAsync(int id)

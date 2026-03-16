@@ -3,31 +3,31 @@ using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Repositories.Interfaces;
 using InventoryAssetTracking.Services.Interfaces;
 using InventoryAssetTracking.Tools;
-using Microsoft.AspNetCore.Identity;
+using MapsterMapper;
 
 namespace InventoryAssetTracking.Services;
 
-public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrGenerator, EntityChecker entityChecker) : IAssetService
+public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrGenerator, EntityChecker entityChecker, IMapper mapper) : IAssetService
 {
-    public async Task<Asset?> GetByIdAsync(int id)
+    public async Task<AssetDto?> GetByIdAsync(int id)
     {
         var asset = await repository.GetByIdAsync(id);
-        return asset;
+        return asset == null ? null : mapper.Map<AssetDto>(asset);
     }
 
-    public async Task<Asset?> GetByNameAsync(string assetName)
+    public async Task<AssetDto?> GetByNameAsync(string assetName)
     {
         var asset = await repository.GetByNameAsync(assetName);
-        return asset;
+        return asset == null ? null : mapper.Map<AssetDto>(asset);
     }
 
-    public async Task<List<Asset>> GetAllAsync()
+    public async Task<List<AssetDto>> GetAllAsync()
     {
         var assets = await repository.GetAllAsync();
-        return assets;
+        return mapper.Map<List<AssetDto>>(assets);
     }
 
-    public async Task<Asset> CreateAsync(AssetDto dto)
+    public async Task<AssetDto> CreateAsync(AssetDto dto)
     {
         if (!await entityChecker.UserExistsByIdAsync(dto.UserId))
             throw new InvalidOperationException($"User with id {dto.UserId} not found");
@@ -54,10 +54,10 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         asset.QrCodePath = qrCodePath;
         await repository.UpdateAsync(asset);
         
-        return asset;
+        return mapper.Map<AssetDto>(asset);
     }
 
-    public async Task<Asset> UpdateAsync(int id, AssetDto dto)
+    public async Task<AssetDto> UpdateAsync(int id, AssetDto dto)
     {
         var asset = await repository.GetByIdAsync(id);
         if (asset == null)
@@ -72,7 +72,7 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         asset.UpdatedAt = DateTime.UtcNow;
         
         await repository.UpdateAsync(asset);
-        return asset;
+        return mapper.Map<AssetDto>(asset);
     }
 
     public async Task DeleteAsync(int id)

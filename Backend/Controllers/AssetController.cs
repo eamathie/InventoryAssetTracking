@@ -44,15 +44,23 @@ public class AssetController(IAssetService service) : ControllerBase
         return Ok(assets);
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<Asset>> Create(AssetDto dto)
     {
-        var asset = await service.CreateAsync(dto);
-        return CreatedAtAction(nameof(Get), new { id = asset.Id }, asset);
+        try
+        {
+            var asset = await service.CreateAsync(dto);
+            return Created();
+            //return CreatedAtAction(nameof(Get), new { id = asset.Id }, asset);
+        }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [Authorize(Roles = "Admin")]

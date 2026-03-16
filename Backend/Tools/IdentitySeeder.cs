@@ -17,7 +17,7 @@ public class IdentitySeeder(RoleManager<IdentityRole> roleManager, UserManager<U
         }
 
         // 2. Ensure admin user exists
-        const string adminEmail = "admin@example.com";
+        const string adminEmail = "admin@admin.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
         if (adminUser == null)
@@ -30,7 +30,7 @@ public class IdentitySeeder(RoleManager<IdentityRole> roleManager, UserManager<U
                 CreatedAt = DateTime.UtcNow
             };
 
-            await userManager.CreateAsync(adminUser, "Admin123!");
+            await userManager.CreateAsync(adminUser, "Password123!");
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }
     }
