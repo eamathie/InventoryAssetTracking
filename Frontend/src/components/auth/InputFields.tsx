@@ -1,13 +1,14 @@
 import InputField from "./InputField";
 
 interface InputFieldsProps {
-    names: string[];
+    names: readonly string[];
+    onChange: (field: string, value: string) => void;
 }
 
-const InputFields = ({ names }: InputFieldsProps) => {
+const InputFields = ({ names, onChange}: InputFieldsProps) => {
     return(
         <div className="flex-col">
-            {names.map((n, index) => <InputField key={n + index} name={n}/>)}
+            {names.map((name) => <InputField key={name} name={name} onChange={onChange}/>)}
         </div>
     )
 }
