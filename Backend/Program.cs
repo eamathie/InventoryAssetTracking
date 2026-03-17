@@ -85,6 +85,18 @@ builder.Services.AddIdentityCore<User>(options =>
     .AddEntityFrameworkStores<InventoryAssetContext>()
     .AddDefaultTokenProviders();
 
+// Set up CORS
+var ApplicationFrontend = "_applicationFrontend";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: ApplicationFrontend,
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173")
+                        .AllowAnyHeader();
+                    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -96,6 +108,8 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedRolesAsync();
 }
 
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -105,6 +119,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(ApplicationFrontend);
 
 app.UseAuthentication();
 app.UseAuthorization();

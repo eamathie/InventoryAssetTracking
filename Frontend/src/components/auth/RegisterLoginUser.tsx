@@ -26,8 +26,39 @@ const RegisterLoginUser = () => {
         }))
     }
 
-    const handleRegister = () => {
-        console.log(userInfo)
+    const handleSubmit = async () => {
+        const regUrl = "../Auth/register"
+        const loginUrl = "../Auth/login"
+        const relUrl = register ? regUrl : loginUrl
+        const combinedUrl = new URL(relUrl, import.meta.env.VITE_BACKEND_BASE_URL).href
+        console.log(combinedUrl)
+
+        const filtered = Object.fromEntries(
+            Object.entries(userInfo).filter(([_, value]) => value !== "")
+        )
+
+        console.log(filtered)
+
+        try {
+            const response = await fetch(combinedUrl, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(filtered)
+            })
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+
+        setUserInfo({
+            name: "",
+            email: "",
+            password:""
+        })
     }
 
     return(
@@ -37,7 +68,7 @@ const RegisterLoginUser = () => {
             <p className="text-sm text-gray-600 mb-6">Please enter required information below</p>
         </div>
 
-        <form className="flex flex-col gap-3" action={handleRegister}>
+        <form className="flex flex-col gap-3" action={handleSubmit}>
             <InputFields names={register ? fieldsRegister : fieldsLogin} onChange={handleFieldChange} />
             <button type="submit" className="cursor-pointer w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
             {register ? "Register" : "Log in"}

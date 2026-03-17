@@ -14,6 +14,7 @@ const InputField = ({ name, onChange }: InputFieldProps) => {
             <input 
                 className="flex-1 max-w-40 min-w-0 justify-self-end border border-solid rounded px4"
                 onChange={(e) => onChange(name, e.target.value)}
+                type={name}
             />
         </div>
     )
