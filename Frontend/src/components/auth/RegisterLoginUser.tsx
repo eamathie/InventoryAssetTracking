@@ -1,5 +1,6 @@
 import { useState } from "react";
 import InputFields from "./InputFields";
+import { authRequest } from "../../tools/authHelper";
 
 type UserInfo = {
     name: string
@@ -27,32 +28,15 @@ const RegisterLoginUser = () => {
     }
 
     const handleSubmit = async () => {
-        const regUrl = "../Auth/register"
-        const loginUrl = "../Auth/login"
-        const relUrl = register ? regUrl : loginUrl
-        const combinedUrl = new URL(relUrl, import.meta.env.VITE_BACKEND_BASE_URL).href
-        console.log(combinedUrl)
+        const relativeUrl = register ? "../Auth/register" : "../Auth/login"
+        const combinedUrl = new URL(relativeUrl, import.meta.env.VITE_BACKEND_BASE_URL).href
 
         const filtered = Object.fromEntries(
             Object.entries(userInfo).filter(([_, value]) => value !== "")
         )
 
-        console.log(filtered)
-
-        try {
-            const response = await fetch(combinedUrl, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(filtered)
-            })
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`)
-            }
-        } catch (error) {
-            console.error(error)
-        }
+        const response = await authRequest(combinedUrl, filtered)
+        console.log(response);
 
         setUserInfo({
             name: "",

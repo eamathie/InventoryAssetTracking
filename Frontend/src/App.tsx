@@ -1,4 +1,3 @@
-import React from 'react'
 import RegisterLoginUser from './components/auth/RegisterLoginUser'
 
 const App = () => {
