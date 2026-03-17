@@ -37,11 +37,15 @@ const RegisterLoginUser = () => {
             <p className="text-sm text-gray-600 mb-6">Please enter required information below</p>
         </div>
 
-        <form className="flex flex-col gap-8" action={handleRegister}>
+        <form className="flex flex-col gap-3" action={handleRegister}>
             <InputFields names={register ? fieldsRegister : fieldsLogin} onChange={handleFieldChange} />
-            <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
+            <button type="submit" className="cursor-pointer w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
             {register ? "Register" : "Log in"}
-            </button>
+            </button >
+
+            <div onClick={() => setRegister(!register)} className="cursor-pointer text-xs text-blue-500 font-bold rounded transition-colors w-fit">
+                {register ? "Already have an account?" : "Don't have an account?"}
+            </div>
         </form>
       </div>
     )
