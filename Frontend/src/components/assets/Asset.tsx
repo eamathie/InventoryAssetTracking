@@ -8,22 +8,25 @@ interface AssetProps {
 }
 
 const Asset = ({ name, categoryId, status, purchaseDate, userId, notes }: AssetProps) => {
+
+    
+
     return(
-        <div>
-            <div>
+        <div className="text-sm rounded-lg shadow-xl px-6 py-6 max-w-3xs flex-col cursor-pointer w-full bg-white hover:bg-gray-200">
+            <div className="text-xl font-bold underline">
                 {name}
             </div>
 
             <div>
-                {status}
+                Status: {status}
             </div>
 
             <div>
-                {purchaseDate.toString()}
+                Purchased: {purchaseDate.toString()}
             </div>
 
-            <div>
-                {notes}
+            <div className="italic py-1">
+                Notes: {notes}
             </div>
         </div>
     )
