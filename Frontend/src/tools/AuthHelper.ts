@@ -14,5 +14,6 @@ export const authRequest = async (url: string, data: Record<string, string>) => 
         
     } catch (error) {
         console.error(error)
+        throw error;
     }
 }

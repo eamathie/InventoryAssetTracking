@@ -13,6 +13,7 @@ const RegisterLoginUser = () => {
     const fieldsRegister = ["Name", "Email", "Password"]
     const fieldsLogin = ["Email", "Password"]
     const [register, setRegister] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const [userInfo, setUserInfo] = useState<UserInfo>({
         name: "",
@@ -28,21 +29,28 @@ const RegisterLoginUser = () => {
     }
 
     const handleSubmit = async () => {
-        const relativeUrl = register ? "../Auth/register" : "../Auth/login"
-        const combinedUrl = new URL(relativeUrl, import.meta.env.VITE_BACKEND_BASE_URL).href
+        try {
+            const relativeUrl = register ? "../Auth/register" : "../Auth/login"
+            const combinedUrl = new URL(relativeUrl, import.meta.env.VITE_BACKEND_BASE_URL).href
+    
+            const filtered = Object.fromEntries(
+                Object.entries(userInfo).filter(([_, value]) => value !== "")
+            )
+    
+            const response = await authRequest(combinedUrl, filtered)
+            console.log(response);
+    
+            setUserInfo({
+                name: "",
+                email: "",
+                password:""
+            })
 
-        const filtered = Object.fromEntries(
-            Object.entries(userInfo).filter(([_, value]) => value !== "")
-        )
-
-        const response = await authRequest(combinedUrl, filtered)
-        console.log(response);
-
-        setUserInfo({
-            name: "",
-            email: "",
-            password:""
-        })
+            setErrorMessage("");
+            
+        } catch (error) {
+            setErrorMessage("Something went wrong, please try again");
+        }
     }
 
     return(
@@ -58,6 +66,10 @@ const RegisterLoginUser = () => {
                     <button type="submit" className="cursor-pointer w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
                     {register ? "Register" : "Log in"}
                     </button >
+
+                    <div className="text-xs text-red-500 font-bold rounded transition-colors w-fit">
+                        {errorMessage}
+                    </div>
 
                     <div onClick={() => setRegister(!register)} className="cursor-pointer text-xs text-blue-500 font-bold rounded transition-colors w-fit">
                         {register ? "Already have an account?" : "Don't have an account?"}
