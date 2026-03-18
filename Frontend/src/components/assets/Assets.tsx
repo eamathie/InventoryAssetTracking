@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { assetsAllRequest } from "../../tools/AssetsHelper"
+import Asset from "./Asset"
 
 
 type Asset = {
@@ -12,7 +13,7 @@ type Asset = {
 }
 
 const Assets = () => {
-    const [assetNames, setAssetNames] = useState<Asset[]>([])
+    const [assets, setAssets] = useState<Asset[]>([])
 
     useEffect(() => {
         handleRequest()
@@ -20,12 +21,19 @@ const Assets = () => {
     
     const handleRequest = async () => {
         const response = await assetsAllRequest()
-        console.log(response)
+        setAssets(response)
     }
 
     return (
         <div>
-            
+            {assets.map((a, index) => <Asset key={index}
+            name={a.name} 
+            categoryId={a.categoryId} 
+            status={a.status} 
+            purchaseDate={a.purchaseDate}
+            userId={a.userId}
+            notes={a.notes}
+             /> )}
         </div>
     )
 }

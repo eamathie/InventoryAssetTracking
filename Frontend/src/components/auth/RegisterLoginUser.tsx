@@ -1,6 +1,7 @@
 import { useState } from "react";
 import InputFields from "./InputFields";
 import { authRequest } from "../../tools/AuthHelper";
+import { useNavigate } from "react-router";
 
 type UserInfo = {
     name: string
@@ -28,6 +29,8 @@ const RegisterLoginUser = () => {
         }))
     }
 
+    const navigate = useNavigate();
+
     const handleSubmit = async () => {
         try {
             const relativeUrl = register ? "../Auth/register" : "../Auth/login"
@@ -46,7 +49,8 @@ const RegisterLoginUser = () => {
                 password:""
             })
 
-            setErrorMessage("");
+            setErrorMessage("")
+            navigate("/assets")
             
         } catch (error) {
             setErrorMessage("Something went wrong, please try again");

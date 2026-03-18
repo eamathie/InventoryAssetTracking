@@ -1,8 +1,10 @@
-import RegisterLoginUser from './components/auth/RegisterLoginUser'
+import { Outlet } from 'react-router'
 
 const App = () => {
   return (
-    <RegisterLoginUser/>
+    <div>
+      <Outlet />
+    </div>
   )
 }
 
