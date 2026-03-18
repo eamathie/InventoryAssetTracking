@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace InventoryAssetTracking.Controllers;
 
@@ -52,13 +53,18 @@ public class AuthController(UserManager<User> userManager, IMapper mapper) : Con
         };
         
         authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
-        
         var token = GenerateJwtToken(authClaims);
-        return Ok(new
+
+        var cookieOptions = new CookieOptions
         {
-            token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo
-        });
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTime.UtcNow.AddHours(1)
+        };
+
+        Response.Cookies.Append("AuthToken", token, cookieOptions);
+        return Ok(new{ message = "Auth Token generated successfully"});
     }
 
 
@@ -141,18 +147,21 @@ public class AuthController(UserManager<User> userManager, IMapper mapper) : Con
     }
 
     
-    private JwtSecurityToken GenerateJwtToken(List<Claim> claims)
+    private string GenerateJwtToken(List<Claim> claims)
     {
         var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!)); // already checked for null in DotEnvLoader
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        return new JwtSecurityToken(
+        var jwtSecurityToken = new JwtSecurityToken(
             issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
             audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
             expires: DateTime.Now.AddHours(1),
             claims: claims,
             signingCredentials: creds
         );
+
+        var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        return token;
     }
 }

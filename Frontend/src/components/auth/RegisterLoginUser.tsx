@@ -31,7 +31,7 @@ const RegisterLoginUser = () => {
     const handleSubmit = async () => {
         try {
             const relativeUrl = register ? "../Auth/register" : "../Auth/login"
-            const combinedUrl = new URL(relativeUrl, import.meta.env.VITE_BACKEND_BASE_URL).href
+            const combinedUrl = new URL(relativeUrl, import.meta.env.VITE_BACKEND_BASE_URL_HTTPS).href
     
             const filtered = Object.fromEntries(
                 Object.entries(userInfo).filter(([_, value]) => value !== "")

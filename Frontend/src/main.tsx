@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route} from 'react-router'
 import App from './App.tsx'
 import './index.css'
 import RegisterLoginUser from './components/auth/RegisterLoginUser.tsx'
+import Assets from './components/assets/Assets.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path ="/" element={<App />} >
           <Route path = "auth" element={<RegisterLoginUser />} />
         </Route>
+        <Route path="/assets" element={<Assets />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

@@ -68,10 +68,21 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuer = true,
             ValidateAudience = true,
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.ContainsKey("AuthToken"))
+                    context.Token = context.Request.Cookies["AuthToken"];
+                
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -93,7 +104,8 @@ builder.Services.AddCors(options =>
                     policy =>
                     {
                         policy.WithOrigins("http://localhost:5173")
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                     });
 });
 
