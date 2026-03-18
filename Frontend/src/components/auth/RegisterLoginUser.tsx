@@ -1,6 +1,6 @@
 import { useState } from "react";
 import InputFields from "./InputFields";
-import { authRequest } from "../../tools/authHelper";
+import { authRequest } from "../../tools/AuthHelper";
 
 type UserInfo = {
     name: string
