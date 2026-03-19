@@ -3,19 +3,20 @@ import { assetsAllRequest } from "../../tools/AssetsHelper"
 import Asset from "./Asset"
 import AssetDetails from "./AssetDetails"
 
-
-type AssetsResponse = {
+export type AssetResponse = {
     name: string
     categoryId: number
     status: string
     purchaseDate: Date
     userId: string
+    qrCodePath: string
     notes: string
 }
 
 const Assets = () => {
-    const [assets, setAssets] = useState<AssetsResponse[]>([])
+    const [assets, setAssets] = useState<AssetResponse[]>([])
     const [open, setOpen] = useState(false)
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
     useEffect(() => {
         handleRequest()
@@ -26,7 +27,10 @@ const Assets = () => {
         setAssets(response)
     }
 
-    const handleOpen = () => setOpen(true)
+    const handleOpen = (index: number) => {
+        setSelectedIndex(index)
+        setOpen(true)
+    }   
     const handleClose = () => setOpen(false)
 
     return (
@@ -43,10 +47,12 @@ const Assets = () => {
                     purchaseDate={a.purchaseDate}
                     userId={a.userId}
                     notes={a.notes}
-                    onClick={handleOpen}
-                    /> )}
+                    onClick={() => handleOpen(index)}
+                    />)
+                    }
                 </div>
-                <AssetDetails open={open} onClose={handleClose}/>
+                {selectedIndex !== null && <AssetDetails assetData={assets[selectedIndex]} open={open} onClose={handleClose}/>}
+                
             </div>
         </div>
     )
