@@ -15,6 +15,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 // Add controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -46,6 +51,7 @@ builder.Services.AddScoped<IAssetHistoryRepository, AssetHistoryRepository>();
 
 // Set up automapping between DTOs and models
 builder.Services.AddMapster();
+
 
 // Set up connection to db
 var root = Directory.GetCurrentDirectory();

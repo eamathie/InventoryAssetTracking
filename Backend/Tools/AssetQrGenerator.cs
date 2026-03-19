@@ -1,8 +1,9 @@
-﻿using QRCoder;
+﻿using Microsoft.AspNetCore.Mvc;
+using QRCoder;
 
 namespace InventoryAssetTracking.Tools;
 
-public class AssetQrGenerator(IWebHostEnvironment environment)
+public class AssetQrGenerator(IWebHostEnvironment environment, ILogger<AssetQrGenerator> logger)
 {
     private readonly QRCodeGenerator _generator = new();
     
@@ -19,5 +20,15 @@ public class AssetQrGenerator(IWebHostEnvironment environment)
         await File.WriteAllBytesAsync(filePath, pngBytes);
         
         return  $"/QrCodes/{id}.png";
+    }
+
+    public async Task<FileContentResult?> GetQrCode(int id)
+    {
+        var qrFolder = Path.Combine(environment.WebRootPath, $"QrCodes/{id}.png");
+        logger.LogInformation(qrFolder);
+        if (!File.Exists(qrFolder))
+            return null;
+        var bytes = await File.ReadAllBytesAsync(qrFolder);
+        return new FileContentResult(bytes, "image/png");//Convert.ToBase64String(bytes);
     }
 }

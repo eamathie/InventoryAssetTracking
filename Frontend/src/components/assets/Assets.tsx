@@ -3,7 +3,7 @@ import { assetsAllRequest } from "../../tools/AssetsHelper"
 import Asset from "./Asset"
 
 
-type Asset = {
+type AssetsResponse = {
     name: string
     categoryId: number
     status: string
@@ -13,7 +13,7 @@ type Asset = {
 }
 
 const Assets = () => {
-    const [assets, setAssets] = useState<Asset[]>([])
+    const [assets, setAssets] = useState<AssetsResponse[]>([])
 
     useEffect(() => {
         handleRequest()

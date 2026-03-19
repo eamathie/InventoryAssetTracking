@@ -146,6 +146,19 @@ public class AuthController(UserManager<User> userManager, IMapper mapper) : Con
 
     }
 
+    [Authorize]
+    [HttpGet("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserResponseDto>> GetById(string userId)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        if (user == null)
+            return NotFound("User not found");
+        
+        var response = mapper.Map<UserResponseDto>(user);
+        return Ok(response);
+    }
     
     private string GenerateJwtToken(List<Claim> claims)
     {
