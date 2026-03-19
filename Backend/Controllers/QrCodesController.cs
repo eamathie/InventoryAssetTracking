@@ -9,12 +9,12 @@ namespace InventoryAssetTracking.Controllers;
 public class QrCodeController(AssetQrGenerator assetQrGenerator) : ControllerBase
 {
     [Authorize]
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByPath(int id/* [FromQuery] string qrCodePath */)
+    public async Task<IActionResult> GetByPath(int id)
     {
-        var qrImage = await assetQrGenerator.GetQrCode(id/* qrCodePath */);
+        var qrImage = await assetQrGenerator.GetQrCode(id);
         if (qrImage == null)
             return NotFound("QR code not found");
         

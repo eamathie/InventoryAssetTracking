@@ -8,6 +8,7 @@ interface AssetProps {
     purchaseDate: Date
     userId: string
     notes: string
+    onClick: () => void
 }
 
 type User = {
@@ -17,7 +18,7 @@ type User = {
 }
 
 
-const Asset = ({ name, categoryId, status, purchaseDate, userId, notes }: AssetProps) => {
+const Asset = ({ name, categoryId, status, purchaseDate, userId, notes, onClick }: AssetProps) => {
 
     const [user, setUser] = useState<User | null>(null)
 
@@ -31,7 +32,7 @@ const Asset = ({ name, categoryId, status, purchaseDate, userId, notes }: AssetP
     }
 
     return(
-        <div className="text-sm rounded-lg shadow-xl px-6 py-6 max-w-3xs flex-col cursor-pointer w-full bg-white hover:bg-gray-200">
+        <div onClick={onClick} className="text-sm rounded-lg shadow-xl px-6 py-6 max-w-3xs flex-col cursor-pointer w-full bg-white hover:bg-gray-200">
             <div className="text-xl font-bold underline">
                 {name}
             </div>

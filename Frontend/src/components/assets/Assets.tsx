@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { assetsAllRequest } from "../../tools/AssetsHelper"
 import Asset from "./Asset"
+import AssetDetails from "./AssetDetails"
 
 
 type AssetsResponse = {
@@ -14,6 +15,7 @@ type AssetsResponse = {
 
 const Assets = () => {
     const [assets, setAssets] = useState<AssetsResponse[]>([])
+    const [open, setOpen] = useState(false)
 
     useEffect(() => {
         handleRequest()
@@ -23,6 +25,9 @@ const Assets = () => {
         const response = await assetsAllRequest()
         setAssets(response)
     }
+
+    const handleOpen = () => setOpen(true)
+    const handleClose = () => setOpen(false)
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 justify-center">
@@ -38,8 +43,10 @@ const Assets = () => {
                     purchaseDate={a.purchaseDate}
                     userId={a.userId}
                     notes={a.notes}
+                    onClick={handleOpen}
                     /> )}
                 </div>
+                <AssetDetails open={open} onClose={handleClose}/>
             </div>
         </div>
     )
