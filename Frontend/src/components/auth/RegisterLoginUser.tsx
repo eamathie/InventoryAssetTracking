@@ -50,7 +50,7 @@ const RegisterLoginUser = () => {
             })
 
             setErrorMessage("")
-            navigate("/assets")
+            navigate("/categories")
             
         } catch (error) {
             setErrorMessage("Something went wrong, please try again");

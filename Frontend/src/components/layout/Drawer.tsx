@@ -1,14 +1,6 @@
-import { useEffect } from "react"
+import type { DrawerInfo } from "../categories/Categories"
 
-const Drawer = ({ title, content, open , onClose }: { title: string, content: Object[]/* [string, string | number | Date][] */,  open: boolean, onClose: () => void }) => {       
-    useEffect(() => {
-        content.forEach(obj => {
-        Object.entries(obj).forEach(([key, value]) => {
-            console.log(key, value)
-        })
-        })
-    }, [content])
-    
+const Drawer = ({ drawerInfo, open , onClose }: { drawerInfo: DrawerInfo, open: boolean, onClose: () => void }) => {           
     if (!open) return null
     return(
         <div className="fixed inset-0 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
@@ -19,7 +11,7 @@ const Drawer = ({ title, content, open , onClose }: { title: string, content: Ob
                             <div className="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
                                 <div className="px-4 sm:px-6">
                                     <div className="flex items-start justify-between">
-                                        <h1 id="slide-over-title" className="text-2xl font-medium bold underline text-gray-900">{title}</h1>
+                                        <h1 id="slide-over-title" className="text-2xl font-medium bold underline text-gray-900">{drawerInfo.name}</h1>
                                         <div className="ml-3 h-7 flex items-center">
                                         <button onClick={onClose} type="button" className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                             <span className="sr-only">Close panel</span>
@@ -40,9 +32,9 @@ const Drawer = ({ title, content, open , onClose }: { title: string, content: Ob
                                         {/* <div className="w-3xs h-3xs border-2">
                                             {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
                                         </div> */}
-                                            {content.map((obj, i) => (
+                                            {drawerInfo.content.map((obj, i) => (
                                                 <div key={i} className="mb-4 p-3 border rounded bg-white shadow">
-                                                {Object.entries(obj).map(([key, value]) => ((key === "name" || key === "status") &&
+                                                {Object.entries(obj).map(([key, value]) => (
                                                     <div key={key} className="flex justify-between py-1">
                                                         <span className="font-semibold">{key}</span>
                                                         <span>{String(value)}</span>

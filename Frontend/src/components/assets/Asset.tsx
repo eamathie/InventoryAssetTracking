@@ -18,7 +18,7 @@ type User = {
 }
 
 
-const Asset = ({ name, categoryId, status, purchaseDate, userId, notes, onClick }: AssetProps) => {
+const Asset = ({ name, status, purchaseDate, userId, notes, onClick }: AssetProps) => {
 
     const [user, setUser] = useState<User | null>(null)
 

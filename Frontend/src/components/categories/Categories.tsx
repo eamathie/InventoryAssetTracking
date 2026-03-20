@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react"
-import type { AssetResponse } from "../assets/Assets"
 import { categoriesAllRequest } from "../../tools/CategoryHelper"
 import Category from "./Category"
 import Drawer from "../layout/Drawer"
 
-export type CategoryResponse = {
+export interface CategoryResponse {
     id: number
     name: string
-    assets: AssetResponse[]
+    assets: Content[]
 }
 
-type DrawerInfo = {
+export interface Content {
     name: string
-    content: Object[]//[string, string | number | Date][]
+    status: string
+}
+
+export type DrawerInfo = {
+    name: string
+    content: Content[]
 }
 
 const Categories = () => {
@@ -30,19 +34,14 @@ const Categories = () => {
     }
 
     const handleOpen = (id: number) => {
-        getCategoryAssets(id)
         const category = categories.find(c => c.id == id)
         if (category) {
             setDrawerInfo({
                 name: category.name,
-                content: category.assets
+                content: category.assets.map((c: Content) => ({ name: c.name, status: c.status }))
             })
         }
         SetOpen(true)
-    }
-
-    const getCategoryAssets = (id: number) => {
-        console.log(categories.find(c => c.id == id)?.assets)
     }
 
     const handleClose = () => SetOpen(false)
@@ -54,15 +53,9 @@ const Categories = () => {
                     Categories
                 </div>
                 <div className="grid grid-5 gap-4">
-                    {categories.map((c, index) => <Category key={index}
-                    id={c.id}
-                    name={c.name}
-                    assets={c.assets}
-                    onClick={() => handleOpen(c.id)}
-                    />)
-                    }
+                    {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleOpen(c.id)} />)}
                 </div>
-                {drawerInfo && <Drawer title={drawerInfo.name} content={drawerInfo.content} open={open} onClose={handleClose}  />}
+                {drawerInfo && <Drawer drawerInfo={drawerInfo} open={open} onClose={handleClose}  />}
             </div>
         </div>
     )
