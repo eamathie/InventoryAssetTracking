@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import type { AssetResponse } from "./Assets"
 import { qrCodeRequest } from "../../tools/QrCodeHelper"
+import { userById } from "../../tools/UserHelper"
 
 type QrCodeResponse = {
     contentType: string
@@ -11,23 +12,39 @@ type QrCodeResponse = {
     lastModified: string | null
 }
 
+type User = {
+    id: string
+    name: string
+    email: string
+}
+
 const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse | null, open: boolean, onClose: () => void }) => {
     const [qrCodePath, setQrCodePath] = useState<string | null>(null)
     const [qrCode, setQrCode] = useState<QrCodeResponse | null>(null)
+    const [user, setUser] = useState<User | null>(null)
 
+    
     useEffect(() => {
-        if (assetData)
+        if (assetData) {
             setQrCodePath(assetData.qrCodePath)
-    }, [assetData])
+            handleUserRequest(assetData.userId)
+        }
 
+    }, [assetData])
+    
     useEffect(() => {
         const num = numberInString(qrCodePath) 
         handleQrResponse(num)
     }, [qrCodePath])
-
+    
     const handleQrResponse = async (num: number | null) => {
         const response = num && await qrCodeRequest(num)
         setQrCode(response)
+    }
+
+    const handleUserRequest = async (userId: string) => {
+        const response = await userById(userId)
+        setUser(response)
     }
 
     if (!open) return null
@@ -40,7 +57,7 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse |
                             <div className="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
                                 <div className="px-4 sm:px-6">
                                     <div className="flex items-start justify-between">
-                                        <h2 id="slide-over-title" className="text-2xl font-medium bold underline text-gray-900">{assetData?.name}</h2>
+                                        <h1 id="slide-over-title" className="text-2xl font-medium bold underline text-gray-900">{assetData?.name}</h1>
                                         <div className="ml-3 h-7 flex items-center">
                                         <button onClick={onClose} type="button" className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                             <span className="sr-only">Close panel</span>
@@ -55,11 +72,18 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse |
                                 <div className="mt-6 relative flex-1 px-4 sm:px-6">
                                 {/* Replace with your content */}
                                 <div className="absolute inset-0 px-4 sm:px-6">
-                                    <div className="h-full border-2 border-dashed border-gray-200" aria-hidden="true">
+                                    <div className="flex flex-col items-center justify-center gap-3 h-full border-2 border-dashed border-gray-200" aria-hidden="true">
                                         
-
                                         {/*Here goes the content*/}
-                                        {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
+                                        <div className="w-3xs h-3xs border-2">
+                                            {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
+                                        </div>
+                                        <div>
+                                            <h3>Status: {assetData?.status}</h3>
+                                            <h3>Assigned to: {user?.name}</h3>
+                                            <h3>Purchased: {assetData?.purchaseDate.toString()}</h3>
+                                            <h3>Notes: {assetData?.notes}</h3>
+                                        </div>
 
                                     </div>
                                 </div>
