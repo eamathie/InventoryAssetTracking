@@ -21,6 +21,12 @@ public class AssetService(IAssetRepository repository, AssetQrGenerator assetQrG
         return asset == null ? null : mapper.Map<AssetResponseDto>(asset);
     }
 
+    public async Task<List<AssetResponseDto>> GetByUserId(string userId)
+    {
+        var assets = await repository.GetByUserId(userId);
+        return mapper.Map<List<AssetResponseDto>>(assets);
+    }
+
     public async Task<List<AssetResponseDto>> GetAllAsync()
     {
         var assets = await repository.GetAllAsync();

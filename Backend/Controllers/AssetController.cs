@@ -15,7 +15,7 @@ public class AssetController(IAssetService service) : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Asset>> Get(int id)
+    public async Task<ActionResult<AssetResponseDto>> Get(int id)
     {
         var asset = await service.GetByIdAsync(id);
         if (asset == null)
@@ -27,7 +27,7 @@ public class AssetController(IAssetService service) : ControllerBase
     [HttpGet("by-name")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Asset>> GetByName(string name)
+    public async Task<ActionResult<AssetResponseDto>> GetByName(string name)
     {
         var asset = await service.GetByNameAsync(name);
         if (asset == null)
@@ -36,9 +36,18 @@ public class AssetController(IAssetService service) : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<AssetResponseDto>>> GetByUserId(string userId)
+    {
+        var assets = await service.GetByUserId(userId);
+        return Ok(assets);
+    }
+
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<Asset>>> GetAll()
+    public async Task<ActionResult<List<AssetResponseDto>>> GetAll()
     {
         var assets = await service.GetAllAsync();
         return Ok(assets);

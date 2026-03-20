@@ -23,6 +23,11 @@ public class AssetRepository(InventoryAssetContext context) : IAssetRepository
             .Equals(assetName.ToLower().Trim()));
     }
 
+    public async Task<List<Asset>> GetByUserId(string id)
+    {
+        return await context.Assets.Where(a => a.UserId == id).ToListAsync(); 
+    }
+
     public async Task CreateAsync(Asset asset)
     {
         context.Assets.Add(asset);
