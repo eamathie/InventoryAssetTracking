@@ -8,12 +8,12 @@ public class CategoryRepository(InventoryAssetContext context) : ICategoryReposi
 {
     public async Task<List<Category>> GetAllAsync()
     {
-        return await context.Categories.ToListAsync();
+        return await context.Categories.Include(c => c.Assets).ToListAsync();
     }
 
     public async Task<Category?> GetByIdAsync(int id)
     {
-        return await context.Categories.FindAsync(id);
+        return await context.Categories.Include(c => c.Assets).Where(c => c.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<Category?> GetByNameAsync(string categoryName)

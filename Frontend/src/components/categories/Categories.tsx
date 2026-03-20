@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import type { AssetResponse } from "../assets/Assets"
 import { categoriesAllRequest } from "../../tools/CategoryHelper"
 import Category from "./Category"
+import Drawer from "../layout/Drawer"
 
 export type CategoryResponse = {
     id: number
@@ -9,8 +10,16 @@ export type CategoryResponse = {
     assets: AssetResponse[]
 }
 
+type DrawerInfo = {
+    name: string
+    content: Object[]//[string, string | number | Date][]
+}
+
 const Categories = () => {
     const [categories, setCategories] = useState<CategoryResponse[]>([])
+    const [drawerInfo, setDrawerInfo] = useState<DrawerInfo | null>(null)
+    const [open, SetOpen] = useState(false)
+
     useEffect(() => {
         handleCategoriesRequest()
     }, [])
@@ -20,9 +29,23 @@ const Categories = () => {
         setCategories(response)
     }
 
-    useEffect(() => {
-        console.log(categories)
-    }, [categories])
+    const handleOpen = (id: number) => {
+        getCategoryAssets(id)
+        const category = categories.find(c => c.id == id)
+        if (category) {
+            setDrawerInfo({
+                name: category.name,
+                content: category.assets
+            })
+        }
+        SetOpen(true)
+    }
+
+    const getCategoryAssets = (id: number) => {
+        console.log(categories.find(c => c.id == id)?.assets)
+    }
+
+    const handleClose = () => SetOpen(false)
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 justify-center">
@@ -35,9 +58,11 @@ const Categories = () => {
                     id={c.id}
                     name={c.name}
                     assets={c.assets}
+                    onClick={() => handleOpen(c.id)}
                     />)
                     }
                 </div>
+                {drawerInfo && <Drawer title={drawerInfo.name} content={drawerInfo.content} open={open} onClose={handleClose}  />}
             </div>
         </div>
     )
