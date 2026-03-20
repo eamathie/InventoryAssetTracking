@@ -2,11 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router";
 
 const Navbar: React.FC = () => {
-
     const navigate = useNavigate()
     
     const handleSignInClicked = () => {
-        navigate("/Auth")
+        navigate("/auth")
     }
 
 
@@ -23,14 +22,14 @@ const Navbar: React.FC = () => {
 
             {/* Center: Links */}
             <div className="hidden md:flex space-x-6">
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                <a href="/assets" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                 Home
+                </a>
+                <a href="/categories" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                Categories
                 </a>
                 <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                 About
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                Blog
                 </a>
                 <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                 Contact
