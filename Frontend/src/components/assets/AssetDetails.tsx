@@ -5,6 +5,7 @@ import { userById } from "../../tools/UserHelper"
 import { assetHistoryById } from "../../tools/AssetsHelper"
 import Drawer from "../layout/Drawer"
 import { type DrawerInfo } from "../categories/Categories"
+import { useNavigate } from "react-router"
 
 type QrCodeResponse = {
     contentType: string
@@ -40,6 +41,8 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
     const [drawerInfo, setDrawerInfo] = useState<DrawerInfo | null>(null)
     const [detailsOpen,  setDetailsOpen] = useState(false)
 
+    const navigate = useNavigate()
+
     
     useEffect(() => {
         if (assetData) {
@@ -55,19 +58,34 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
     }, [qrCodePath])
     
     const handleQrResponse = async (num: number | null) => {
-        const response = num && await qrCodeRequest(num)
-        setQrCode(response)
+        try {
+            const response = num && await qrCodeRequest(num)
+            setQrCode(response)
+            
+        } catch {
+            navigate("/auth")
+        }
     }
 
     const handleUserRequest = async (userId: string) => {
-        const response = await userById(userId)
-        setUser(response)
+        try {
+            const response = await userById(userId)
+            setUser(response)
+            
+        } catch {
+            navigate("/auth")
+        }
     }
 
     const handleOpenHistoryDrawer = async (assetId: number) => {
-        const response = await assetHistoryById(assetId)
-        setAssetDetails(response)
-        setDetailsOpen(true)
+        try {
+            const response = await assetHistoryById(assetId)
+            setAssetDetails(response)
+            setDetailsOpen(true)
+            
+        } catch {
+            navigate("/auth")
+        }
     }
 
     const displayNames: Record<string, string> = {
@@ -99,8 +117,13 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
                             const label = displayNames[key] ?? key;
 
                             if (key === "userId") {
-                                const user = await userById(asset[key]);
-                                return [label, user.name] as [string, string];
+                                try {
+                                    const user = await userById(asset[key]);
+                                    return [label, user.name] as [string, string];
+                                    
+                                } catch {
+                                    navigate("/auth")
+                                }
                             }
 
                             return [label, String(asset[key])] as [string, string];

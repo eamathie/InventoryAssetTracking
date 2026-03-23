@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { assetsAllRequest } from "../../tools/AssetsHelper"
 import Asset from "./Asset"
 import AssetDetails from "./AssetDetails"
+import { useNavigate } from "react-router"
 
 export type AssetResponse = {
     id: number
@@ -18,14 +19,19 @@ const Assets = () => {
     const [assets, setAssets] = useState<AssetResponse[]>([])
     const [open, setOpen] = useState(false)
     const [selectedIndex, setSelectedIndex] = useState<number>(0)
+    const navigate = useNavigate()
 
     useEffect(() => {
         handleRequest()
     }, [])
     
     const handleRequest = async () => {
-        const response = await assetsAllRequest()
-        setAssets(response)
+        try {
+            const response = await assetsAllRequest()
+            setAssets(response)
+        } catch {
+            navigate("/auth")
+        }
     }
 
     const handleOpen = (index: number) => {

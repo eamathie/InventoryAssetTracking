@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { categoriesAllRequest } from "../../tools/CategoryHelper"
 import Category from "./Category"
 import Drawer from "../layout/Drawer"
+import { useNavigate } from "react-router"
 
 export interface CategoryResponse {
     id: number
@@ -33,14 +34,20 @@ const Categories = () => {
     const [categories, setCategories] = useState<CategoryResponse[]>([])
     const [drawerInfo, setDrawerInfo] = useState<DrawerInfo | null>(null)
     const [open, SetOpen] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         handleCategoriesRequest()
     }, [])
 
     const handleCategoriesRequest = async () => {
-        const response = await categoriesAllRequest()
-        setCategories(response)
+        try {
+            const response = await categoriesAllRequest()
+            setCategories(response)
+            
+        } catch {
+            navigate("/auth")
+        }
     }
 
     const handleOpen = (id: number) => {
