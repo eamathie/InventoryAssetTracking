@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
                 About
                 </a>
                 {admin && 
-                <a href="#" className="hover:text-gray-900">
+                <a href="/admin" className="hover:text-gray-900">
                     Admin
                 </a>}
             </div>
@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
                     About
                 </a>
                 {admin && 
-                <a href="#" className="block hover:bg-gray-100 rounded-md px-3 py-2">
+                <a href="/admin" className="block hover:bg-gray-100 rounded-md px-3 py-2">
                     Admin
                 </a>}
                 <button onClick={handleSignInClicked} className="w-full rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700">

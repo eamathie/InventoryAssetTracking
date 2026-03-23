@@ -7,14 +7,14 @@ interface AuthProviderProps {
 }
 
 interface AuthContextType {
-    roles: string[]
+    roles: string[] | null
     refreshRoles: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [roles, setRoles] = useState<string[]>([])
+    const [roles, setRoles] = useState<string[] | null>(null)
 
     const refreshRoles = async () => {
         const r = await userRoles()
@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ roles, refreshRoles}}>
+        <AuthContext value={{ roles, refreshRoles}}>
             {children}
-        </AuthContext.Provider>
+        </AuthContext>
     )
 }
