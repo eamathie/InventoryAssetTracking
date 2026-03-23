@@ -2,6 +2,9 @@ import { useEffect, useState } from "react"
 import type { AssetResponse } from "./Assets"
 import { qrCodeRequest } from "../../tools/QrCodeHelper"
 import { userById } from "../../tools/UserHelper"
+import { assetHistoryById } from "../../tools/AssetsHelper"
+import Drawer from "../layout/Drawer"
+import { type DrawerInfo } from "../categories/Categories"
 
 type QrCodeResponse = {
     contentType: string
@@ -18,10 +21,24 @@ type User = {
     email: string
 }
 
-const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse | null, open: boolean, onClose: () => void }) => {
+type AssetDetailsResponse = {
+    id: number
+    assetId: number
+    userId: string
+    action: string
+    details: string
+    createdAt: Date
+}
+
+const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, open: boolean, onClose: () => void }) => {
     const [qrCodePath, setQrCodePath] = useState<string | null>(null)
     const [qrCode, setQrCode] = useState<QrCodeResponse | null>(null)
     const [user, setUser] = useState<User | null>(null)
+    
+    
+    const [assetDetails, setAssetDetails] = useState<AssetDetailsResponse[]>([])
+    const [drawerInfo, setDrawerInfo] = useState<DrawerInfo | null>(null)
+    const [detailsOpen,  setDetailsOpen] = useState(false)
 
     
     useEffect(() => {
@@ -46,6 +63,62 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse |
         const response = await userById(userId)
         setUser(response)
     }
+
+    const handleOpenHistoryDrawer = async (assetId: number) => {
+        const response = await assetHistoryById(assetId)
+        setAssetDetails(response)
+        setDetailsOpen(true)
+    }
+
+    const displayNames: Record<string, string> = {
+        userId: "User",
+        action: "Action",
+        createdAt: "Date",
+        details: "Details"
+    };
+
+
+    useEffect(() => {
+        if (assetDetails && assetData) {
+            const fields: (keyof typeof assetDetails[number])[] = [
+                "userId",
+                "action",
+                "createdAt",
+                "details"
+                //"purchaseDate",
+                //"notes"
+            ]
+
+
+
+        const load = async () => {
+            const attributes = await Promise.all(
+                assetDetails.map(async asset => {
+                    return Promise.all(
+                        fields.map(async key => {
+                            const label = displayNames[key] ?? key;
+
+                            if (key === "userId") {
+                                const user = await userById(asset[key]);
+                                return [label, user.name] as [string, string];
+                            }
+
+                            return [label, String(asset[key])] as [string, string];
+                        })
+                    )
+                })
+            )
+
+            setDrawerInfo({
+                name: assetData.name,
+                content: attributes
+            })
+        }
+            load()
+        }    
+    }, [assetDetails])
+    
+    const handleCloseHistoryDrawer = () => setDetailsOpen(false)
 
     if (!open) return null
     return(
@@ -79,10 +152,11 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse |
                                             {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
                                         </div>
                                         <div>
-                                            <h3>Status: {assetData?.status}</h3>
+                                            <h3>Status: {assetData.status}</h3>
                                             <h3>Assigned to: {user?.name}</h3>
-                                            <h3>Purchased: {assetData?.purchaseDate.toString()}</h3>
-                                            <h3>Notes: {assetData?.notes}</h3>
+                                            <h3>Purchased: {assetData.purchaseDate.toString()}</h3>
+                                            <h3>Notes: {assetData.notes}</h3>
+                                            <h3 onClick={() => handleOpenHistoryDrawer(assetData.id)} className="italic text-blue-500 cursor-pointer">Details</h3>
                                         </div>
 
                                     </div>
@@ -93,6 +167,7 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse |
                     </div>
                 </div>
             </div>
+            {drawerInfo && <Drawer open={detailsOpen} info={drawerInfo} onClose={handleCloseHistoryDrawer}  />}
         </div>
     )
 }

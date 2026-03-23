@@ -4,6 +4,7 @@ import Asset from "./Asset"
 import AssetDetails from "./AssetDetails"
 
 export type AssetResponse = {
+    id: number
     name: string
     categoryId: number
     status: string
@@ -16,7 +17,7 @@ export type AssetResponse = {
 const Assets = () => {
     const [assets, setAssets] = useState<AssetResponse[]>([])
     const [open, setOpen] = useState(false)
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+    const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
     useEffect(() => {
         handleRequest()

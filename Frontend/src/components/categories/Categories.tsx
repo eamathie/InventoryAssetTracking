@@ -6,7 +6,7 @@ import Drawer from "../layout/Drawer"
 export interface CategoryResponse {
     id: number
     name: string
-    assets: Content[]
+    assets: Asset[]
 }
 
 export interface Content {
@@ -16,8 +16,18 @@ export interface Content {
 
 export type DrawerInfo = {
     name: string
-    content: Content[]
+    content: [string, string][][]
 }
+
+export interface Asset {
+    id: number
+    name: string
+    status: string
+    purchaseDate: string
+    notes: string
+    [key: string]: any 
+}
+
 
 const Categories = () => {
     const [categories, setCategories] = useState<CategoryResponse[]>([])
@@ -36,9 +46,18 @@ const Categories = () => {
     const handleOpen = (id: number) => {
         const category = categories.find(c => c.id == id)
         if (category) {
+            const fields: (keyof typeof category.assets[number])[] = [
+                "name",
+                "status",
+                //"purchaseDate",
+                //"notes"
+            ]
+
             setDrawerInfo({
                 name: category.name,
-                content: category.assets.map((c: Content) => ({ name: c.name, status: c.status }))
+                content: category.assets.map(asset =>
+                    fields.map(key => [key, String(asset[key])] as [string, string])
+                )
             })
         }
         SetOpen(true)
@@ -55,7 +74,7 @@ const Categories = () => {
                 <div className="grid grid-5 gap-4">
                     {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleOpen(c.id)} />)}
                 </div>
-                {drawerInfo && <Drawer drawerInfo={drawerInfo} open={open} onClose={handleClose}  />}
+                {drawerInfo && <Drawer info={drawerInfo} open={open} onClose={handleClose}  />}
             </div>
         </div>
     )

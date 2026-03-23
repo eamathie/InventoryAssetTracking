@@ -1,6 +1,6 @@
 import type { DrawerInfo } from "../categories/Categories"
 
-const Drawer = ({ drawerInfo, open , onClose }: { drawerInfo: DrawerInfo, open: boolean, onClose: () => void }) => {           
+const Drawer = ({ info, open , onClose }: { info: DrawerInfo, open: boolean, onClose: () => void }) => {           
     if (!open) return null
     return(
         <div className="fixed inset-0 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
@@ -11,7 +11,7 @@ const Drawer = ({ drawerInfo, open , onClose }: { drawerInfo: DrawerInfo, open: 
                             <div className="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
                                 <div className="px-4 sm:px-6">
                                     <div className="flex items-start justify-between">
-                                        <h1 id="slide-over-title" className="text-2xl font-medium bold underline text-gray-900">{drawerInfo.name}</h1>
+                                        <h1 id="slide-over-title" className="text-2xl font-medium bold underline text-gray-900">{info.name}</h1>
                                         <div className="ml-3 h-7 flex items-center">
                                         <button onClick={onClose} type="button" className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                             <span className="sr-only">Close panel</span>
@@ -26,20 +26,20 @@ const Drawer = ({ drawerInfo, open , onClose }: { drawerInfo: DrawerInfo, open: 
                                 <div className="mt-6 relative flex-1 px-4 sm:px-6">
                                 {/* Replace with your content */}
                                 <div className="absolute inset-0 px-4 sm:px-6">
-                                    <div className="grid grid-cols-2 items-start justify-start gap-3 h-full border-2 border-dashed border-gray-200" aria-hidden="true">
+                                    <div className="flex flex-col items-start justify-start gap-3 h-full border-2 border-dashed border-gray-200" aria-hidden="true">
                                         
                                         {/*Here goes the content*/}
                                         {/* <div className="w-3xs h-3xs border-2">
                                             {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
                                         </div> */}
-                                            {drawerInfo.content.map((obj, i) => (
-                                                <div key={i} className="mb-4 p-3 border rounded bg-white shadow">
-                                                {Object.entries(obj).map(([key, value]) => (
-                                                    <div key={key} className="flex justify-between py-1">
-                                                        <span className="font-semibold">{key}</span>
-                                                        <span>{String(value)}</span>
-                                                    </div>
-                                                ))}
+                                            {info.content.map((card, i) => (
+                                                <div key={i} className="shadow-md mb-4 p-3 border rounded bg-white cursor-pointer hover:bg-gray-100">
+                                                    {card.map(([key, value], index) => (
+                                                        <div key={index} className="flex justify-between py-1">
+                                                            <span className="font-semibold">{key}:</span>
+                                                            <span>{value}</span>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             ))}
                                     </div>

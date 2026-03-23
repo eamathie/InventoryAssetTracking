@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
             {/* Center: Links */}
             <div className="hidden md:flex space-x-6">
                 <a href="/assets" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                Home
+                Assets
                 </a>
                 <a href="/categories" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                 Categories
@@ -68,19 +68,16 @@ const Navbar: React.FC = () => {
         {/* Mobile menu (static example) */}
         <div className="md:hidden border-t border-gray-200">
             <div className="space-y-1 px-4 py-3">
-            <a href="#" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
-                Home
+            <a href="/assets" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
+                Assets
             </a>
-            <a href="#" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
-                About
-            </a>
-            <a href="#" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
-                Blog
+            <a href="/categories" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
+                Categories
             </a>
             <a href="#" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
                 Contact
             </a>
-            <button className="w-full rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700">
+            <button onClick={handleSignInClicked} className="w-full rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700">
                 Sign in
             </button>
             </div>
