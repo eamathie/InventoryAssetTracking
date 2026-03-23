@@ -156,7 +156,9 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
                                             <h3>Assigned to: {user?.name}</h3>
                                             <h3>Purchased: {assetData.purchaseDate.toString()}</h3>
                                             <h3>Notes: {assetData.notes}</h3>
-                                            <h3 onClick={() => handleOpenHistoryDrawer(assetData.id)} className="italic text-blue-500 cursor-pointer">Details</h3>
+                                            <h3 onClick={() => handleOpenHistoryDrawer(assetData.id)} className="italic text-blue-500 cursor-pointer">
+                                                History
+                                            </h3>
                                         </div>
 
                                     </div>

@@ -1,5 +1,4 @@
 ﻿using InventoryAssetTracking.DTOs;
-using InventoryAssetTracking.Models;
 using InventoryAssetTracking.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

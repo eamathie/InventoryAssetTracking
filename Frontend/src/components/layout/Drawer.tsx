@@ -33,11 +33,11 @@ const Drawer = ({ info, open , onClose }: { info: DrawerInfo, open: boolean, onC
                                             {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
                                         </div> */}
                                             {info.content.map((card, i) => (
-                                                <div key={i} className="shadow-md mb-4 p-3 border rounded bg-white cursor-pointer hover:bg-gray-100">
+                                                <div key={i} className="w-full shadow-md mb-4 p-3 border rounded bg-white cursor-pointer hover:bg-gray-100">
                                                     {card.map(([key, value], index) => (
-                                                        <div key={index} className="flex justify-between py-1">
+                                                        <div key={index} className="flex py-1" /*justify-between py-1*/ >
                                                             <span className="font-semibold">{key}:</span>
-                                                            <span>{value}</span>
+                                                            <span className="pl-5">{value}</span>
                                                         </div>
                                                     ))}
                                                 </div>
