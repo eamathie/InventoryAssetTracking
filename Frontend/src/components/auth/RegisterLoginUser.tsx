@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import InputFields from "./InputFields";
 import { authRequest } from "../../tools/AuthHelper";
 import { useNavigate } from "react-router";
+import { AuthContext } from "../../tools/AuthProvider";
 
 type UserInfo = {
     name: string
@@ -10,7 +11,7 @@ type UserInfo = {
 }
 
 const RegisterLoginUser = () => {
-
+    const auth = useContext(AuthContext)
     const fieldsRegister = ["Name", "Email", "Password"]
     const fieldsLogin = ["Email", "Password"]
     const [register, setRegister] = useState(false);
@@ -50,6 +51,9 @@ const RegisterLoginUser = () => {
             })
 
             setErrorMessage("")
+            
+            await auth?.refreshRoles();
+            
             navigate("/categories")
             
         } catch (error) {
@@ -65,7 +69,11 @@ const RegisterLoginUser = () => {
                     <p className="text-sm text-gray-600 mb-6">Please enter required information below</p>
                 </div>
 
-                <form className="flex flex-col gap-3" action={handleSubmit}>
+                <form className="flex flex-col gap-3" onSubmit={(e) => {
+                    e.preventDefault()
+                    handleSubmit()
+                    }}
+                    >
                     <InputFields names={register ? fieldsRegister : fieldsLogin} onChange={handleFieldChange} />
                     <button type="submit" className="cursor-pointer w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
                     {register ? "Register" : "Log in"}

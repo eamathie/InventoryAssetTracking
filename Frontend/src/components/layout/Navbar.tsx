@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router";
+import { AuthContext } from "../../tools/AuthProvider";
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate()
-    
+
+    const auth = useContext(AuthContext)
+
+    const roles = auth?.roles ?? []
+    const admin = roles.includes("Admin")
+
     const handleSignInClicked = () => {
         navigate("/auth")
     }
-
 
     return (
         <nav className="bg-white border-b border-gray-200">
@@ -21,19 +26,20 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Center: Links */}
-            <div className="hidden md:flex space-x-6">
-                <a href="/assets" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+            <div className="text-gray-600 text-sm font-medium hidden md:flex space-x-6">
+                <a href="/assets" className="hover:text-gray-900">
                 Assets
                 </a>
-                <a href="/categories" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                <a href="/categories" className="hover:text-gray-900">
                 Categories
                 </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                <a href="#" className="hover:text-gray-900">
                 About
                 </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                Contact
-                </a>
+                {admin && 
+                <a href="#" className="hover:text-gray-900">
+                    Admin
+                </a>}
             </div>
 
             {/* Right: Button */}
@@ -66,20 +72,24 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile menu (static example) */}
-        <div className="md:hidden border-t border-gray-200">
+        <div className="text-gray-700 text-base font-medium md:hidden border-t border-gray-200">
             <div className="space-y-1 px-4 py-3">
-            <a href="/assets" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
-                Assets
-            </a>
-            <a href="/categories" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
-                Categories
-            </a>
-            <a href="#" className="block text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 text-base font-medium">
-                Contact
-            </a>
-            <button onClick={handleSignInClicked} className="w-full rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700">
-                Sign in
-            </button>
+                <a href="/assets" className="block hover:bg-gray-100 rounded-md px-3 py-2">
+                    Assets
+                </a>
+                <a href="/categories" className="block hover:bg-gray-100 rounded-md px-3 py-2">
+                    Categories
+                </a>
+                <a href="#" className="block hover:bg-gray-100 rounded-md px-3 py-2">
+                    About
+                </a>
+                {admin && 
+                <a href="#" className="block hover:bg-gray-100 rounded-md px-3 py-2">
+                    Admin
+                </a>}
+                <button onClick={handleSignInClicked} className="w-full rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700">
+                    Sign in
+                </button>
             </div>
         </div>
         </nav>

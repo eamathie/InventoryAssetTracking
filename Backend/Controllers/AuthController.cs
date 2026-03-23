@@ -159,6 +159,24 @@ public class AuthController(UserManager<User> userManager, IMapper mapper) : Con
         var response = mapper.Map<UserResponseDto>(user);
         return Ok(response);
     }
+
+    [Authorize]
+    [HttpGet("roles")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> GetCurrentUserRoles()
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId is null)
+            return Unauthorized("User ID claim missing");
+        
+        var user = await userManager.FindByIdAsync(currentUserId);
+        if (user is null)
+            return BadRequest($"Invalid user ID {currentUserId}");
+        var roles = await userManager.GetRolesAsync(user);
+        return Ok(roles);
+    }
     
     private string GenerateJwtToken(List<Claim> claims)
     {
