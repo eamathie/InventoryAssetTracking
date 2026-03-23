@@ -70,6 +70,10 @@ const Categories = () => {
         SetOpen(true)
     }
 
+    const handleAssetClicked = () => {
+        navigate("/assets")
+    }
+
     const handleClose = () => SetOpen(false)
 
     return (
@@ -81,7 +85,7 @@ const Categories = () => {
                 <div className="grid grid-5 gap-4">
                     {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleOpen(c.id)} />)}
                 </div>
-                {drawerInfo && <Drawer info={drawerInfo} open={open} onClose={handleClose}  />}
+                {drawerInfo && <Drawer info={drawerInfo} open={open} onClose={handleClose} onElementClicked={handleAssetClicked} />}
             </div>
         </div>
     )
