@@ -77,16 +77,14 @@ const Categories = () => {
     const handleClose = () => SetOpen(false)
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 justify-center">
-            <div className="flex flex-col gap-4 p-5">
-                <div className="text-3xl font-bold">
-                    Categories
-                </div>
-                <div className="grid grid-5 gap-4">
-                    {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleOpen(c.id)} />)}
-                </div>
-                {drawerInfo && <Drawer info={drawerInfo} open={open} onClose={handleClose} onElementClicked={handleAssetClicked} />}
+        <div className="flex flex-col flex-1 mt-[64px] gap-4 p-5">
+            <div className="text-3xl font-bold">
+                Categories
             </div>
+            <div className="grid grid-5 gap-4">
+                {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleOpen(c.id)} />)}
+            </div>
+            {drawerInfo && <Drawer info={drawerInfo} open={open} onClose={handleClose} onElementClicked={handleAssetClicked} />}
         </div>
     )
 }
