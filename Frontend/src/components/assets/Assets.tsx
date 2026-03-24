@@ -41,13 +41,11 @@ const Assets = () => {
     const handleClose = () => setOpen(false)
 
     return (
-        <div>
-
-        <div className="flex flex-col flex-1 mt-[64px] gap-4 p-5">
+        <div className="flex flex-col flex-1 max-h-[494px] mt-[64px] gap-4 p-5">
             <div className="text-3xl font-bold">
                 Assets
             </div>
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-5 gap-4 max-h-full overflow-y-scroll">
                 {assets.map((a, index) => <Asset key={index}
                 name={a.name} 
                 categoryId={a.categoryId} 
@@ -61,7 +59,6 @@ const Assets = () => {
             </div>
             {selectedIndex !== null && <AssetDetails assetData={assets[selectedIndex]} open={open} onClose={handleClose}/>}
         </div>
-            </div>
     )
 }
 
