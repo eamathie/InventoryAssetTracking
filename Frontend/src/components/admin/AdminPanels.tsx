@@ -6,8 +6,10 @@ import { usersAll } from "../../tools/UserHelper"
 import { assetsAllRequest } from "../../tools/AssetsHelper"
 import { categoriesAllRequest } from "../../tools/CategoryHelper"
 import DeleteConfirmPanel from "./DeleteConfirmPanel"
+import EditPanel from "./EditPanel"
 
 export type User = {
+    type: "user"
     id: string
     name: string
     email: string
@@ -17,6 +19,7 @@ export type User = {
 }
 
 export type Asset = {
+    type: "asset"
     id: number
     name: string
     status: string
@@ -27,7 +30,8 @@ export type Asset = {
     notes: string
 }
 
-type Category = {
+export type Category = {
+    type: "category"
     id: number
     name: string
     assets: Asset[]
@@ -46,7 +50,7 @@ export type PanelInfo = {
     content: [string, string][][]
 }
 
-export type ElementToDelete = {
+export type ElementToHandle = {
     title: string
     id: string | number
 }
@@ -63,7 +67,8 @@ const AdminPanels = () => {
     const [categories, setCategories] = useState<Category[]>([])
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
-    const [elementToDelete, setElementToDelete] = useState<ElementToDelete | null>(null)
+    const [elementToHandle, setElementToHandle] = useState<User| Asset | Category | null>(null)
+    const [editOpen, setEditOpen] = useState(false)
     
     useEffect(() => {
         if (roles === null)
@@ -90,37 +95,45 @@ const AdminPanels = () => {
         }
     }
 
-    const handleDeleteConfirmOpen = (id: any, title: string) => {
-        setElementToDelete({title:title, id:id})
+    const handleDeleteConfirmOpen = (obj: User | Asset | Category) => {
+        setElementToHandle(obj)
         setDeleteConfirmOpen(true)
     }
     
-    const handleDeleteConfirmClose = () => {
-        setDeleteConfirmOpen(false)
+    const handleDeleteConfirmClose = () => setDeleteConfirmOpen(false)
+
+    const handleEditOpen = (obj: User | Asset | Category) => {
+        setElementToHandle(obj)
+        setEditOpen(true)
     }
 
-    const excludedKeys = ["assets", "checkouts", "categoryId"]
+    const handleEditClose = () => setEditOpen(false)
+
     return (
         <div className="flex flex-col flex-1 max-h-[494px] mt-[64px] px-6 py-3 gap-2">
             <h1 className="text-3xl font-bold">Admin page</h1>
             <div className="flex flex-row items-stretch gap-2 justify-center items-center max-h-full w-full pb-8 ">
                 <AdminPanel 
                     title="Users" 
-                    content={users.map(u => Object.fromEntries(Object.entries(u).filter(([key]) => !excludedKeys.includes(key))))} 
+                    content={users} 
+                    onEditClicked={handleEditOpen}
                     onDeleteClicked={handleDeleteConfirmOpen}
                 />
                 <AdminPanel 
                     title="Assets" 
-                    content={assets.map(a => Object.fromEntries(Object.entries(a).filter(([key]) => !excludedKeys.includes(key))))} 
+                    content={assets} 
+                    onEditClicked={handleEditOpen}
                     onDeleteClicked={handleDeleteConfirmOpen}
                 />
                 <AdminPanel 
                     title="Categories" 
-                    content={categories.map(c => Object.fromEntries(Object.entries(c).filter(([key]) => !excludedKeys.includes(key))))} 
+                    content={categories} 
+                    onEditClicked={handleEditOpen}
                     onDeleteClicked={handleDeleteConfirmOpen}
                 />
             </div>
-            <DeleteConfirmPanel elementToDelete={elementToDelete} open={deleteConfirmOpen} onClose={handleDeleteConfirmClose} />
+            <DeleteConfirmPanel elementToDelete={elementToHandle} open={deleteConfirmOpen} onClose={handleDeleteConfirmClose} />
+            <EditPanel elementToEdit={elementToHandle} open={editOpen} onClose={handleEditClose} />
         </div>
     )
 }
