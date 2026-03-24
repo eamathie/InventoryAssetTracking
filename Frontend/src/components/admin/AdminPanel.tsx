@@ -1,11 +1,11 @@
 export type AdminPanelInfo = {
     title: string
-    content: { [k: string]: any; }[]//[string, string][][]
+    content: { [k: string]: any; }[]
 }
 
 const AdminPanel = ({ title, content }: AdminPanelInfo) => {
     return (
-        <div className="rounded-lg shadow-xl p-3 w-full min-h-full bg-white hover:bg-gray-200">
+        <div className="rounded-lg shadow-xl p-3 w-full max-h-full bg-white overflow-y-scroll">
             <h1 className="text-xl font-medium bold underline text-gray-900">{title}</h1>
             <div className="flex flex-col gap-4">
                 {content.map((obj, index) =>

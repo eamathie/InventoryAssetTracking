@@ -83,9 +83,9 @@ const AdminPanels = () => {
 
     const excludedKeys = ["assets", "checkouts", "categoryId"]
     return (
-        <div className="flex flex-col flex-1 mt-[64px] px-6 py-3 gap-2">
+        <div className="flex flex-col flex-1 max-h-[494px] mt-[64px] px-6 py-3 gap-2">
             <h1 className="text-3xl font-bold">Admin page</h1>
-                <div className="flex flex-row items-stretch gap-2 justify-center items-center h-full w-full ">
+                <div className="flex flex-row items-stretch gap-2 justify-center items-center max-h-full w-full pb-8 ">
                     <AdminPanel title="Users" content={users.map(u => Object.fromEntries(Object.entries(u).filter(([key]) => !excludedKeys.includes(key))))} />
                     <AdminPanel title="Assets" content={assets.map(a => Object.fromEntries(Object.entries(a).filter(([key]) => !excludedKeys.includes(key))))} />
                     <AdminPanel title="Categories" content={categories.map(c => Object.fromEntries(Object.entries(c).filter(([key]) => !excludedKeys.includes(key))))} />
