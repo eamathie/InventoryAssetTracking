@@ -45,7 +45,7 @@ const Assets = () => {
             <div className="text-3xl font-bold">
                 Assets
             </div>
-            <div className="grid grid-cols-5 gap-4 max-h-full overflow-y-scroll">
+            <div className="grid grid-cols-5 gap-4 max-h-full overflow-y-scroll rounded-lg">
                 {assets.map((a, index) => <Asset key={index}
                 name={a.name} 
                 categoryId={a.categoryId} 

@@ -1,3 +1,4 @@
+import { filterItemAttributes } from "../../tools/AttributesExtractor"
 import type { Asset, Category, User } from "./AdminPanels"
 
 export type AdminPanelInfo = {
@@ -20,7 +21,7 @@ const AdminPanel = ({ title, content, onEditClicked, onDeleteClicked }: AdminPan
         <div className="rounded-lg shadow-xl p-3 w-full max-h-full bg-white overflow-y-scroll">
             <h1 className="text-xl font-medium bold underline text-gray-900">{title}</h1>
             <div className="flex flex-col gap-4">
-                {content.map(u => Object.fromEntries(Object.entries(u).filter(([key]) => !excludedKeys.includes(key)))).map((obj) =>
+                {content.map(item => filterItemAttributes(item, excludedKeys)).map((obj) =>
                     <div key={obj.id} className="rounded-lg shadow-xl p-3 border-2 border-gray-300"> 
                         {Object.entries(obj).map(([key, value]) => (
                             <h2 key={key}>{key}: {value}</h2>
