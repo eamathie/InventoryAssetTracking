@@ -52,7 +52,7 @@ export type PanelInfo = {
 
 export type ElementToHandle = {
     title: string
-    id: string | number
+    element: User| Asset | Category
 }
 
 const AdminPanels = () => {
@@ -67,7 +67,7 @@ const AdminPanels = () => {
     const [categories, setCategories] = useState<Category[]>([])
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
-    const [elementToHandle, setElementToHandle] = useState<User| Asset | Category | null>(null)
+    const [elementToHandle, setElementToHandle] = useState<ElementToHandle | null>(null)
     const [editOpen, setEditOpen] = useState(false)
     
     useEffect(() => {
@@ -95,42 +95,57 @@ const AdminPanels = () => {
         }
     }
 
-    const handleDeleteConfirmOpen = (obj: User | Asset | Category) => {
-        setElementToHandle(obj)
+    const getElementByIdAndType = (id: any, title: string) => {
+        let obj
+        if (title === "user")
+            obj = users.find(u => u.id === id)
+        else if (title === "asset")
+            obj = assets.find(a => a.id === id)
+        else
+            obj = categories.find(c => c.id === id)
+
+        return obj
+    }   
+
+    const handleDeleteConfirmOpen = (id: any, title: string) => {
+        const element = getElementByIdAndType(id, title)
+        if (!element)
+            throw new Error(`Could not find ${title} with id ${id}`)
+        setElementToHandle({title, element})
         setDeleteConfirmOpen(true)
     }
     
-    const handleDeleteConfirmClose = () => setDeleteConfirmOpen(false)
-
-    const handleEditOpen = (obj: User | Asset | Category) => {
-        setElementToHandle(obj)
+    
+    const handleEditOpen = (id: any, title: string) => {
+        const element = getElementByIdAndType(id, title)
+        if (!element)
+            throw new Error(`Could not find ${title} with id ${id}`)
+        setElementToHandle({title, element})
         setEditOpen(true)
     }
-
+    
+    const handleDeleteConfirmClose = () => setDeleteConfirmOpen(false)
     const handleEditClose = () => setEditOpen(false)
+
+    const panels: [string, (User[] | Asset[] | Category[])][] = [
+        ["Users", users],
+        ["Assets", assets],
+        ["Categories", categories]
+    ]
 
     return (
         <div className="flex flex-col flex-1 max-h-[494px] mt-[64px] px-6 py-3 gap-2">
             <h1 className="text-3xl font-bold">Admin page</h1>
             <div className="flex flex-row items-stretch gap-2 justify-center items-center max-h-full w-full pb-8 ">
-                <AdminPanel 
-                    title="Users" 
-                    content={users} 
-                    onEditClicked={handleEditOpen}
-                    onDeleteClicked={handleDeleteConfirmOpen}
-                />
-                <AdminPanel 
-                    title="Assets" 
-                    content={assets} 
-                    onEditClicked={handleEditOpen}
-                    onDeleteClicked={handleDeleteConfirmOpen}
-                />
-                <AdminPanel 
-                    title="Categories" 
-                    content={categories} 
-                    onEditClicked={handleEditOpen}
-                    onDeleteClicked={handleDeleteConfirmOpen}
-                />
+                {panels.map((p, index) => 
+                    <AdminPanel 
+                        key={index} 
+                        title={p[0]}  
+                        content={p[1]} 
+                        onEditClicked={handleEditOpen} 
+                        onDeleteClicked={handleDeleteConfirmOpen}
+                    />
+                )}
             </div>
             <DeleteConfirmPanel elementToDelete={elementToHandle} open={deleteConfirmOpen} onClose={handleDeleteConfirmClose} />
             <EditPanel elementToEdit={elementToHandle} open={editOpen} onClose={handleEditClose} />

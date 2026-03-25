@@ -2,7 +2,7 @@ import type { Asset, Category, User } from "./AdminPanels"
 
 export type AdminPanelInfo = {
     title: string
-    content: User[] | Category[] | Asset[]//{ [k: string]: any; }[]
+    content: User[] | Category[] | Asset[]
     onEditClicked: (id: any, title: string) => void
     onDeleteClicked: (id: any, title: string) => void
 }
@@ -27,10 +27,10 @@ const AdminPanel = ({ title, content, onEditClicked, onDeleteClicked }: AdminPan
                         ))}
                         
                         <div className="flex flex-row gap-10 justify-start pl-3 py-2">
-                            <button onClick={() => onEditClicked(obj, displayNames[title])} className="rounded-md bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
+                            <button onClick={() => onEditClicked(obj.id, displayNames[title])} className="rounded-md bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
                                 Edit
                             </button>
-                            <button onClick={() => onDeleteClicked(obj, displayNames[title])} className="rounded-md bg-red-600 px-2 py-1 text-sm font-medium text-white hover:bg-red-700">
+                            <button onClick={() => onDeleteClicked(obj.id, displayNames[title])} className="rounded-md bg-red-600 px-2 py-1 text-sm font-medium text-white hover:bg-red-700">
                                 Delete
                             </button>
                         </div>
