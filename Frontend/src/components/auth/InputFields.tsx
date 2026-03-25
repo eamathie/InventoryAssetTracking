@@ -8,7 +8,7 @@ interface InputFieldsProps {
 const InputFields = ({ names, onChange}: InputFieldsProps) => {
     return(
         <div className="flex-col">
-            {names.map((name) => <InputField key={name} name={name} onChange={onChange}/>)}
+            {names.map((name) => <InputField defaultValue="" key={name} name={name} onChange={onChange}/>)}
         </div>
     )
 }

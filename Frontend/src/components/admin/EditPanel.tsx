@@ -2,29 +2,41 @@ import { useEffect, useState } from "react"
 import { includeItemAttributes } from "../../tools/AttributesExtractor"
 import InputField from "../auth/InputField"
 import type { ElementToHandle } from "./AdminPanels"
+import { categoryPatch } from "../../tools/CategoryHelper"
+import { assetPatch } from "../../tools/AssetsHelper"
+import { userPatch } from "../../tools/UserHelper"
+
+type EditedAttributes = {
+    name: string
+    email: string
+    status: string
+    purchaseDate: string
+    userId: string
+    notes: string
+}
+
+const requestFunctions: Record<string, (id: any, data: Record<string, string>) => Promise<any>> = {
+  category: categoryPatch,
+  asset: assetPatch,
+  user: userPatch,
+} as const;
+
+type RequestType = keyof typeof requestFunctions;
 
 const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHandle | null, open: boolean, onClose: () => void }) => {
     
     const [attributes, setAttributes] = useState<string[]>([])
-    
-    useEffect(() => {
-        if (!elementToEdit)
-            return
-        switch (elementToEdit.title) {
-            case "user":
-                setAttributes(userAttributes)
-                break
-            case "asset":
-                setAttributes(assetAttributes)
-                break
-            case "category":
-                setAttributes(categoryAttributes)
-        }
-    }, [elementToEdit])
+    const [type, setType] = useState("")
         
-    const handleEdit = async (id: any) => {
-        console.log(`Booom, ${elementToEdit?.title} ${id} just got edited`)
-    }
+    const [editedAttributes, setEditedAttributes] = useState<EditedAttributes>({
+        name: "",
+        email: "",
+        status: "",
+        purchaseDate: "",
+        userId: "",
+        notes: ""
+    })
+     
     const userAttributes = [
         "name",
         "email",
@@ -41,8 +53,75 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
     const categoryAttributes = [
         "name"
     ]
+    
+    useEffect(() => {
+        if (!elementToEdit)
+            return
 
+        switch (elementToEdit.title) {
+            case "user":
+            {
+                setType("user")
+                setAttributes(userAttributes)
+                break
+            }
+            case "asset":
+                setType("asset")
+                setAttributes(assetAttributes)
+                break
+            case "category":
+                setType("category")
+                setAttributes(categoryAttributes)
+        }
 
+        console.log("element to edit changed")
+    }, [elementToEdit])
+    
+    const handleEdit = async (id: any) => {
+
+        if (!elementToEdit)
+            throw new Error("elementToEdit somehow now received in EditPanel")
+
+        try {
+            const data = Object.fromEntries(Object.entries(includeItemAttributes(elementToEdit.element, attributes)))
+            const changedOnly = Object.entries(editedAttributes).filter(([key, _]) => {
+                return Object.keys(data).includes(key)
+            })
+            
+            const repopulated = changedOnly.map(([key, value]) => {
+                if (value === "")
+                    value = data[key]
+
+                return [key, value]
+            })
+
+            const dataToSend = Object.fromEntries(repopulated)
+
+            const requestFunction = requestFunctions[type as RequestType] // <-- this is probably very scary
+            const response = await requestFunction(id, dataToSend)
+            console.log(response);
+
+            setEditedAttributes({
+                name: "",
+                email: "",
+                status: "",
+                purchaseDate: "",
+                userId: "",
+                notes: ""
+            })
+        } catch (error) {
+            console.error(error);
+        }
+        console.log(`Booom, ${elementToEdit?.title} ${id} just got edited`)
+
+    }
+
+    const handleFieldChange = (field: string, value: string) => {
+        setEditedAttributes(prev => ({
+            ...prev,
+            [field.toLowerCase()]: value
+        }))
+    }
     
     if (!open) return null
     return (
@@ -53,7 +132,7 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
                 {elementToEdit?.element && Object.entries(
                     includeItemAttributes(elementToEdit?.element, attributes))
                     .map(([key, value]) => (
-                        <InputField key={key} name={key} defaultValue={value} onChange={() => console.log("ey")} />
+                        <InputField key={key} name={key} defaultValue={value} onChange={handleFieldChange} />
                     ))
                 }
             </div>
