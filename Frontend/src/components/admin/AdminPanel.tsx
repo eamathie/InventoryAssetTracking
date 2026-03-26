@@ -1,9 +1,9 @@
 import { filterItemAttributes } from "../../tools/AttributesExtractor"
-import type { Asset, Category, User } from "./AdminPanels"
+import type { Asset, Category, Checkout, User } from "./AdminPanels"
 
 export type AdminPanelInfo = {
     title: string
-    content: User[] | Category[] | Asset[]
+    content: User[] | Category[] | Asset[] | Checkout[]
     onEditClicked: (id: any, title: string) => void
     onDeleteClicked: (id: any, title: string) => void
 }
@@ -12,26 +12,27 @@ export type AdminPanelInfo = {
 const displayNames: Record<string, string> = {
     "Users": "user",
     "Assets": "asset",
-    "Categories": "category"
+    "Categories": "category",
+    "Checkouts": "checkout"
 }
 
 const excludedKeys = ["assets", "checkouts"]
 const AdminPanel = ({ title, content, onEditClicked, onDeleteClicked }: AdminPanelInfo) => {
     return (
-        <div className="rounded-lg shadow-xl p-3 w-full max-h-full bg-white overflow-y-scroll">
-            <h1 className="text-xl font-medium bold underline text-gray-900">{title}</h1>
-            <div className="flex flex-col gap-4">
+        <div className="flex-1 min-w-0 rounded-lg shadow-xl p-3 pb-12 max-w-full h-full bg-white">
+            <h1 className="text-xl font-medium bold underline text-gray-900 py-1">{title}</h1>
+            <div className="flex flex-col gap-4 rounded-lg border-2 border-gray-400 h-full p-1 overflow-y-scroll">
                 {content.map(item => filterItemAttributes(item, excludedKeys)).map((obj) =>
                     <div key={obj.id} className="rounded-lg shadow-xl w-full px-5 py-4 border-2 border-gray-300"> 
                         <div className="flex justify-start w-full gap-4 text-sm">
                             <div className="shrink-0">
-                                {Object.entries(obj).map(([key, _]) => (
-                                        <h2 className="font-bold">{key}: </h2>
+                                {Object.entries(obj).map(([key, _], index) => (
+                                        <h2 key={index} className="font-bold">{key}: </h2>
                                 ))} 
                             </div>
                             <div className="flex-1 min-w-0 font-normal ">
-                                {Object.entries(obj).map(([_, value]) => (
-                                        <h2 className="truncate">{value} </h2>
+                                {Object.entries(obj).map(([_, value], index) => (
+                                        <h2 key={index} className="truncate">{!value ? "N/A" : value} </h2>
                                 ))}   
                             </div>
                         </div>

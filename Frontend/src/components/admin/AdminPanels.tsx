@@ -7,6 +7,7 @@ import { assetsAllRequest } from "../../tools/AssetsHelper"
 import { categoriesAllRequest } from "../../tools/CategoryHelper"
 import DeleteConfirmPanel from "./DeleteConfirmPanel"
 import EditPanel from "./EditPanel"
+import { checkoutsAllRequest } from "../../tools/CheckoutsHelper"
 
 export type User = {
     id: string
@@ -34,7 +35,7 @@ export type Category = {
     assets: Asset[]
 }
 
-type Checkout = {
+export type Checkout = {
     id: number
     userId: string
     assetId: number
@@ -49,7 +50,7 @@ export type PanelInfo = {
 
 export type ElementToHandle = {
     title: string
-    element: User| Asset | Category
+    element: User| Asset | Category | Checkout
 }
 
 const AdminPanels = () => {
@@ -62,6 +63,7 @@ const AdminPanels = () => {
     const [users, setUsers] = useState<User[]>([])
     const [assets, setAssets] = useState<Asset[]>([])
     const [categories, setCategories] = useState<Category[]>([])
+    const [checkouts, setCheckouts] = useState<Checkout[]>([])
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
     const [elementToHandle, setElementToHandle] = useState<ElementToHandle | null>(null)
@@ -84,9 +86,11 @@ const AdminPanels = () => {
             const usersResponse = await usersAll()
             const assetsResponse = await assetsAllRequest()
             const categories = await categoriesAllRequest()
+            const checkouts = await checkoutsAllRequest()
             setUsers(usersResponse)
             setAssets(assetsResponse)
             setCategories(categories)
+            setCheckouts(checkouts)
         } catch (error) {
             console.log(error)
         }
@@ -98,8 +102,10 @@ const AdminPanels = () => {
             obj = users.find(u => u.id === id)
         else if (title === "asset")
             obj = assets.find(a => a.id === id)
-        else
+        else if (title === "category")
             obj = categories.find(c => c.id === id)
+        else
+            obj = checkouts.find(c => c.id === id)
 
         return obj
     }   
@@ -124,16 +130,17 @@ const AdminPanels = () => {
     const handleDeleteConfirmClose = () => setDeleteConfirmOpen(false)
     const handleEditClose = () => setEditOpen(false)
 
-    const panels: [string, (User[] | Asset[] | Category[])][] = [
+    const panels: [string, (User[] | Asset[] | Category[] | Checkout[])][] = [
         ["Users", users],
         ["Assets", assets],
-        ["Categories", categories]
+        ["Categories", categories],
+        ["Checkouts", checkouts]
     ]
 
     return (
-        <div className="flex flex-col flex-1 max-h-[494px] mt-[64px] px-6 py-3 gap-2">
+        <div className="flex flex-col flex-1 max-h-[494px] mt-[64px] px-6 gap-2">
             <h1 className="text-3xl font-bold">Admin page</h1>
-            <div className="flex flex-row items-stretch gap-2 justify-center items-center max-h-full w-full pb-8 ">
+            <div className="flex gap-2 justify-center max-h-full w-full pb-6">
                 {panels.map((p, index) => 
                     <AdminPanel 
                         key={index} 

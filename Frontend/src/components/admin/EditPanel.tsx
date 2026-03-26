@@ -56,6 +56,13 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
     const categoryAttributes = [
         "name"
     ]
+
+    const checkoutAttributes = [
+        "userId",
+        "assetId",
+        "checkedOutAt",
+        "checkedInAt"
+    ]
     
     useEffect(() => {
         if (!elementToEdit)
@@ -75,6 +82,10 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
             case "category":
                 setType("category")
                 setAttributes(categoryAttributes)
+                break
+            case "checkout":
+                setType("checkout")
+                setAttributes(checkoutAttributes)
         }
 
         console.log("element to edit changed")

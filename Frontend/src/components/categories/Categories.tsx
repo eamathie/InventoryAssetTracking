@@ -46,7 +46,6 @@ const Categories = () => {
     const handleDrawerOpen = (id: number) => {
         const category = categories.find(c => c.id == id)
         if (category) {
-            console.log(category.assets)
             setDrawerInfo({
                 name: category.name,
                 objects: category.assets

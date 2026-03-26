@@ -23,7 +23,7 @@ public class CheckoutService(ICheckoutRepository repository, IMapper mapper) : I
     public async Task<CheckoutResponseDto> CreateAsync(CheckoutDto dto)
     {
         var checkouts = await repository.GetAllAsync();
-        var checkout = checkouts.First(c => c.AssetId == dto.AssetId && c.CheckedOutAt == dto.CheckedOutAt);
+        var checkout = checkouts.FirstOrDefault(c => c.AssetId == dto.AssetId && c.CheckedOutAt == dto.CheckedOutAt);
         if (checkout != null)
             throw new InvalidOperationException($"Checkout for asset with id {checkout.AssetId} checked out at {checkout.CheckedOutAt} already exists");
         
