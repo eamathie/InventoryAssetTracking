@@ -11,6 +11,7 @@ type EditedAttributes = {
     email: string
     status: string
     purchaseDate: string
+    categoryId: number
     userId: string
     notes: string
 }
@@ -33,6 +34,7 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
         email: "",
         status: "",
         purchaseDate: "",
+        categoryId: 0,
         userId: "",
         notes: ""
     })
@@ -46,6 +48,7 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
         "name",
         "status",
         "purchaseDate",
+        "categoryId",
         "userId",
         "notes"
     ]
@@ -106,6 +109,7 @@ const EditPanel = ({elementToEdit, open, onClose }: { elementToEdit: ElementToHa
                 email: "",
                 status: "",
                 purchaseDate: "",
+                categoryId: 0,
                 userId: "",
                 notes: ""
             })
