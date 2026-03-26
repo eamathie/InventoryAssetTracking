@@ -9,7 +9,6 @@ import DeleteConfirmPanel from "./DeleteConfirmPanel"
 import EditPanel from "./EditPanel"
 
 export type User = {
-    type: "user"
     id: string
     name: string
     email: string
@@ -19,7 +18,6 @@ export type User = {
 }
 
 export type Asset = {
-    type: "asset"
     id: number
     name: string
     status: string
@@ -31,7 +29,6 @@ export type Asset = {
 }
 
 export type Category = {
-    type: "category"
     id: number
     name: string
     assets: Asset[]

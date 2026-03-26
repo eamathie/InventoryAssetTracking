@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import { categoriesAllRequest } from "../../tools/CategoryHelper"
 import Category from "./Category"
-import Drawer from "../layout/Drawer"
+import Drawer, { type DrawerInfo } from "../layout/Drawer"
 import { useNavigate } from "react-router"
+import AssetDetails from "../assets/AssetDetails"
+import type { Asset } from "../admin/AdminPanels"
 
 export interface CategoryResponse {
     id: number
@@ -15,25 +17,16 @@ export interface Content {
     status: string
 }
 
-export type DrawerInfo = {
-    name: string
-    content: [string, string][][]
-}
-
-export interface Asset {
-    id: number
-    name: string
-    status: string
-    purchaseDate: string
-    notes: string
-    [key: string]: any 
-}
 
 
 const Categories = () => {
     const [categories, setCategories] = useState<CategoryResponse[]>([])
     const [drawerInfo, setDrawerInfo] = useState<DrawerInfo | null>(null)
-    const [open, SetOpen] = useState(false)
+    const [drawerOpen, SetDrawerOpen] = useState(false)
+
+    const [assetDetailsOpen, setAssetDetailsOpen] = useState(false)
+    const [selectedAsset, setSelectedAsset] = useState< Asset| null>(null)
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -50,41 +43,44 @@ const Categories = () => {
         }
     }
 
-    const handleOpen = (id: number) => {
+    const handleDrawerOpen = (id: number) => {
         const category = categories.find(c => c.id == id)
         if (category) {
-            const fields: (keyof typeof category.assets[number])[] = [
-                "name",
-                "status",
-                //"purchaseDate",
-                //"notes"
-            ]
-
+            console.log(category.assets)
             setDrawerInfo({
                 name: category.name,
-                content: category.assets.map(asset =>
-                    fields.map(key => [key, String(asset[key])] as [string, string])
-                )
+                objects: category.assets
             })
         }
-        SetOpen(true)
+        SetDrawerOpen(true)
     }
+    const handleDrawerClose = () => SetDrawerOpen(false)
 
-    const handleAssetClicked = () => {
-        navigate("/assets")
+    const handleAssetDetailsClose = () => setAssetDetailsOpen(false)
+
+    const handleAssetClicked = (id: any) => {
+        console.log(id)
+        const assets = drawerInfo?.objects
+        const asset = assets?.find(asset => Object.entries(asset).some(([key, value]) => key === "id" && value === id)) ?? null
+        console.log(asset)
+        setSelectedAsset(asset as Asset)
+        setAssetDetailsOpen(true)
     }
-
-    const handleClose = () => SetOpen(false)
-
+    
+    const drawerInfoFilter: Record<string, string> = {
+        name: "Name",
+        status: "Status"
+    }
     return (
         <div className="flex flex-col flex-1 mt-[64px] gap-4 p-5">
             <div className="text-3xl font-bold">
                 Categories
             </div>
             <div className="grid grid-5 gap-4">
-                {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleOpen(c.id)} />)}
+                {categories.map((c, index) => <Category key={index} name={c.name} onClick={() => handleDrawerOpen(c.id)} />)}
             </div>
-            {drawerInfo && <Drawer info={drawerInfo} open={open} onClose={handleClose} onElementClicked={handleAssetClicked} />}
+            {drawerInfo && <Drawer info={drawerInfo} drawerInfoFilter={drawerInfoFilter} open={drawerOpen} onClose={handleDrawerClose} onElementClicked={handleAssetClicked} />}
+            {selectedAsset && <AssetDetails assetData={selectedAsset} open={assetDetailsOpen} onClose={handleAssetDetailsClose} />}
         </div>
     )
 }

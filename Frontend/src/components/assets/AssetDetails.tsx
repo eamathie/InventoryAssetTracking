@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import type { AssetResponse } from "./Assets"
 import { qrCodeRequest } from "../../tools/QrCodeHelper"
 import { userById } from "../../tools/UserHelper"
 import { assetHistoryById } from "../../tools/AssetsHelper"
 import Drawer from "../layout/Drawer"
-import { type DrawerInfo } from "../categories/Categories"
+import type { DrawerInfo } from "../layout/Drawer"
 import { useNavigate } from "react-router"
+import type { Asset } from "../admin/AdminPanels"
 
 type QrCodeResponse = {
     contentType: string
@@ -22,7 +22,7 @@ type User = {
     email: string
 }
 
-type AssetDetailsResponse = {
+type AssetHistoryResponse = {
     id: number
     assetId: number
     userId: string
@@ -31,13 +31,13 @@ type AssetDetailsResponse = {
     createdAt: Date
 }
 
-const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, open: boolean, onClose: () => void }) => {
+const AssetDetails = ( { assetData, open , onClose}: {assetData: Asset, open: boolean, onClose: () => void }) => {
     const [qrCodePath, setQrCodePath] = useState<string | null>(null)
     const [qrCode, setQrCode] = useState<QrCodeResponse | null>(null)
     const [user, setUser] = useState<User | null>(null)
     
     
-    const [assetDetails, setAssetDetails] = useState<AssetDetailsResponse[]>([])
+    const [assetHistory, setHistory] = useState<AssetHistoryResponse[]>([])
     const [drawerInfo, setDrawerInfo] = useState<DrawerInfo | null>(null)
     const [detailsOpen,  setDetailsOpen] = useState(false)
 
@@ -80,7 +80,7 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
     const handleOpenHistoryDrawer = async (assetId: number) => {
         try {
             const response = await assetHistoryById(assetId)
-            setAssetDetails(response)
+            setHistory(response)
             setDetailsOpen(true)
             
         } catch {
@@ -88,60 +88,37 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
         }
     }
 
-    const displayNames: Record<string, string> = {
-        userId: "User",
-        action: "Action",
-        createdAt: "Date",
-        details: "Details"
-    }
-
+    
     useEffect(() => {
-        if (assetDetails && assetData) {
-            const fields: (keyof typeof assetDetails[number])[] = [
-                "userId",
-                "action",
-                "createdAt",
-                "details"
-                //"purchaseDate",
-                //"notes"
-            ]
-
-        const load = async () => {
-            const attributes = await Promise.all(
-                assetDetails.map(async asset => {
-                    return Promise.all(
-                        fields.map(async key => {
-                            const label = displayNames[key] ?? key;
-
-                            if (key === "userId") {
-                                try {
-                                    const user = await userById(asset[key]);
-                                    return [label, user.name] as [string, string];
-                                    
-                                } catch {
-                                    navigate("/auth")
-                                }
-                            }
-
-                            return [label, String(asset[key])] as [string, string];
-                        })
-                    )
+        if (assetHistory && assetData) {
+            const load = async () => {
+                const assetHistoryWithNames = await Promise.all(
+                    assetHistory.map(async history => ({
+                        name: (await userById(history.userId) as User).name,
+                        ...history
+                    }))
+                )
+                
+                setDrawerInfo({
+                    name: assetData.name,
+                    objects: assetHistoryWithNames
                 })
-            )
-
-            setDrawerInfo({
-                name: assetData.name,
-                content: attributes
-            })
-        }
+            }
             load()
         }    
-    }, [assetDetails])
+    }, [assetHistory])
     
     const handleCloseHistoryDrawer = () => setDetailsOpen(false)
     
     const handleElementClicked = () => {
         console.log("clicked")
+    }
+
+    const drawerInfoFilter: Record<string, string> = {
+        name: "User",
+        action: "Action",
+        createdAt: "Date",
+        details: "Details"
     }
 
     if (!open) return null
@@ -192,7 +169,7 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: AssetResponse, 
                     </div>
                 </div>
             </div>
-            {drawerInfo && <Drawer open={detailsOpen} info={drawerInfo} onClose={handleCloseHistoryDrawer} onElementClicked={handleElementClicked} />}
+            {drawerInfo && <Drawer open={detailsOpen} info={drawerInfo} drawerInfoFilter={drawerInfoFilter/* ["name", "action", "createdAt", "details"] */} onClose={handleCloseHistoryDrawer} onElementClicked={handleElementClicked} />}
         </div>
     )
 }

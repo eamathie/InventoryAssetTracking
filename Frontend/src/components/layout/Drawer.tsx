@@ -1,6 +1,16 @@
-import type { DrawerInfo } from "../categories/Categories"
+export type DrawerInfo = {
+    name: string
+    objects: object[]
+}
 
-const Drawer = ({ info, open , onClose, onElementClicked }: { info: DrawerInfo, open: boolean, onClose: () => void, onElementClicked: () => void }) => {           
+const Drawer = ({ info, drawerInfoFilter, open , onClose, onElementClicked }: { info: DrawerInfo, drawerInfoFilter: Record<string, string>, open: boolean, onClose: () => void, onElementClicked: (id: any) => void }) => {           
+    
+    const handleAssetClicked = (i: number) => {
+        const entries = Object.entries(info.objects[i])
+        const id = entries.find(([key]) => key === "id")?.[1];
+        onElementClicked(id)
+    }
+
     if (!open) return null
     return(
         <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
@@ -32,16 +42,18 @@ const Drawer = ({ info, open , onClose, onElementClicked }: { info: DrawerInfo, 
                                     {/* <div className="w-3xs h-3xs border-2">
                                         {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
                                     </div> */}
-                                        {info.content.map((card, i) => (
-                                            <div key={i} className="w-full shadow-md mb-4 p-3 border rounded bg-white cursor-pointer hover:bg-gray-100">
-                                                {card.map(([key, value], index) => (
-                                                    <div onClick={onElementClicked} key={index} className="flex py-1" >
-                                                        <span className="font-semibold">{key}:</span>
-                                                        <span className="pl-5">{value}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ))}
+                                    {info.objects.map((obj, i) => (
+                                        <div key={i} onClick={() => handleAssetClicked(i)} className="w-full shadow-md mb-4 p-3 border rounded bg-white cursor-pointer hover:bg-gray-100" >
+                                            {Object.entries(obj)
+                                                .filter(([key]) => Object.keys(drawerInfoFilter).includes(key))
+                                                .map(([key, value]) =>
+                                                <div key={key} className="flex justify-stretch gap-8 py-1" >
+                                                    <h2 className="w-15 font-bold">{drawerInfoFilter[key]}: </h2>
+                                                    <h2>{value}</h2>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                             {/* End replace */}
