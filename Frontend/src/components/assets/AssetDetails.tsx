@@ -152,14 +152,22 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: Asset, open: bo
                                     <div className="w-3xs h-3xs border-2">
                                         {qrCode && <img src={`data:${qrCode.contentType};base64,${qrCode.fileContents}`} alt="QR Code" />}
                                     </div>
-                                    <div>
-                                        <h3>Status: {assetData.status}</h3>
-                                        <h3>Assigned to: {user?.name}</h3>
-                                        <h3>Purchased: {assetData.purchaseDate.toString()}</h3>
-                                        <h3>Notes: {assetData.notes}</h3>
-                                        <h3 onClick={() => handleOpenHistoryDrawer(assetData.id)} className="italic text-blue-500 cursor-pointer">
-                                            History
-                                        </h3>
+                                    <div className="flex w-full px-5 py-2 gap-4 text-sm">
+                                        <div className="flex flex-col gap-1 shink-0 font-bold">
+                                            <h3>Status: </h3>
+                                            <h3>Assigned to: </h3>
+                                            <h3>Purchased: </h3>
+                                            <h3>Notes: </h3>
+                                            <h3 onClick={() => handleOpenHistoryDrawer(assetData.id)} className="italic font-normal text-blue-500 cursor-pointer">
+                                                History
+                                            </h3>
+                                        </div>
+                                        <div className="flex flex-col gap-1 flex-1 min-w-0">
+                                            <h3 className="truncate">{assetData.status}</h3>
+                                            <h3 className="truncate">{user?.name}</h3>
+                                            <h3 className="truncate">{assetData.purchaseDate.toString()}</h3>
+                                            <h3 className="truncate">{assetData.notes}</h3>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +177,7 @@ const AssetDetails = ( { assetData, open , onClose}: {assetData: Asset, open: bo
                     </div>
                 </div>
             </div>
-            {drawerInfo && <Drawer open={detailsOpen} info={drawerInfo} drawerInfoFilter={drawerInfoFilter/* ["name", "action", "createdAt", "details"] */} onClose={handleCloseHistoryDrawer} onElementClicked={handleElementClicked} />}
+            {drawerInfo && <Drawer open={detailsOpen} info={drawerInfo} drawerInfoFilter={drawerInfoFilter} onClose={handleCloseHistoryDrawer} onElementClicked={handleElementClicked} />}
         </div>
     )
 }
